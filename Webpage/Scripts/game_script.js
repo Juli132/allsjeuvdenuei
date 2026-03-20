@@ -33,7 +33,7 @@ let inputLocked = false;
 let voidTimer = null;
 let transmissionTimer = null;
 let cycleTimer = null;    
-
+let ambientTimer = null;
 function lockInput(time = 1500) {
   inputLocked = true;
   const input = document.getElementById("player-input");
@@ -1294,6 +1294,7 @@ function triggerEnding(type) {
   if (voidTimer) clearInterval(voidTimer);
   if (transmissionTimer) clearInterval(transmissionTimer);
   if (cycleTimer) clearInterval(cycleTimer);
+  if (ambientTimer) clearInterval(ambientTimer);
   
   const endings = {
     good: [
@@ -1426,7 +1427,8 @@ function resetGame() {
   if (window.passiveCleanup) {
     window.passiveCleanup();
   }
-  
+  // Add this with other cleanup
+if (ambientTimer) clearInterval(ambientTimer);
   const panel = document.getElementById("dictionary-panel");
   if (panel) panel.style.display = "none";
   
@@ -1470,6 +1472,124 @@ function handleCommand(input) {
 
   speakWord(cmd);
 }
+
+
+// ==================== AMBIENT EVENT SYSTEM ====================
+function triggerAmbientEvent() {
+  if (gameState.hasEnding) return;
+  
+  // Events only happen when things are GOOD
+  const isHealthy = gameState.planetHealth > 70 && 
+                    gameState.universeHealth > 70 && 
+                    gameState.voidAttention < 30 &&
+                    gameState.realityStability > 70;
+  
+  const isStruggling = gameState.planetHealth < 40 || 
+                       gameState.universeHealth < 40 || 
+                       gameState.voidAttention > 60 ||
+                       gameState.realityStability < 40;
+  
+  // Don't trigger if things are bad
+  if (isStruggling) return;
+  
+  // Choose event based on health
+  let eventList = [];
+  
+  if (isHealthy) {
+    eventList = [
+      () => {
+        // Shooting star
+        const star = document.createElement('div');
+        star.className = 'shooting-star';
+        star.style.left = Math.random() * 80 + '%';
+        star.style.top = Math.random() * 30 + '%';
+        document.getElementById('game').appendChild(star);
+        setTimeout(() => star.remove(), 2000);
+      },
+      () => {
+        // Dust particles around planet
+        for (let i = 0; i < 5; i++) {
+          const dust = document.createElement('div');
+          dust.className = 'dust-particle';
+          dust.style.left = (50 + (Math.random() - 0.5) * 20) + '%';
+          dust.style.top = (50 + (Math.random() - 0.5) * 20) + '%';
+          document.getElementById('game').appendChild(dust);
+          setTimeout(() => dust.remove(), 5000);
+        }
+      },
+      () => {
+        // Planet pulse
+        const planet = document.getElementById('planet');
+        planet.classList.add('planet-pulse');
+        setTimeout(() => planet.classList.remove('planet-pulse'), 500);
+      },
+      () => {
+        // Ring glow
+        const planet = document.getElementById('planet');
+        planet.classList.add('ring-glow');
+        setTimeout(() => planet.classList.remove('ring-glow'), 1000);
+      },
+      () => {
+        // Happy machine message
+        const happyMessages = [
+          "The planet hums contentedly.",
+          "A shooting star traces the sky.",
+          "The void seems... distant.",
+          "Reality feels solid.",
+          "The stars shine brighter for a moment.",
+          "You feel a sense of peace.",
+          "The universe sighs with relief."
+        ];
+        if (Math.random() < 0.3) {
+          addMessage(getRandom(happyMessages), "machine");
+        }
+      }
+    ];
+  } else {
+    // Neutral events - neither good nor bad, just ambiance
+    eventList = [
+      () => {
+        // Occasional dust
+        for (let i = 0; i < 2; i++) {
+          const dust = document.createElement('div');
+          dust.className = 'dust-particle';
+          dust.style.left = (50 + (Math.random() - 0.5) * 30) + '%';
+          dust.style.top = (50 + (Math.random() - 0.5) * 30) + '%';
+          document.getElementById('game').appendChild(dust);
+          setTimeout(() => dust.remove(), 5000);
+        }
+      },
+      () => {
+        // Subtle planet flicker
+        const planet = document.getElementById('planet');
+        planet.style.opacity = '0.98';
+        setTimeout(() => planet.style.opacity = '', 100);
+      }
+    ];
+  }
+  
+  // Pick random event
+  if (eventList.length > 0) {
+    const event = getRandom(eventList);
+    event();
+  }
+}
+
+// Start ambient timer
+function startAmbientTimer() {
+  ambientTimer = setInterval(() => {
+    if (gameState.hasEnding) return;
+    
+    // 20% chance every 45 seconds when healthy
+    const chance = gameState.planetHealth > 70 ? 0.2 : 0.05;
+    
+    if (Math.random() < chance) {
+      triggerAmbientEvent();
+    }
+  }, 45000);
+}
+
+
 
 // --- TIMERS ---
 // --- TIMERS ---
@@ -1654,9 +1774,35 @@ function initGame() {
 
   updateStatsPanel();
   startTimers();
+  startAmbientTimer();
 
   const panel = document.getElementById("dictionary-panel");
   if (panel) panel.style.display = "none";
+
+
+
+  // Add these debug commands at the end of initGame(), before the last closing brace
+window.debug = {
+  ambient: () => triggerAmbientEvent(),
+  healthy: () => {
+    gameState.planetHealth = 100;
+    gameState.universeHealth = 100;
+    gameState.voidAttention = 0;
+    gameState.realityStability = 100;
+    updateStatsPanel();
+    addMessage("Debug: Set to healthy state.", "machine");
+    console.log("Debug: Set to healthy");
+  },
+  stats: () => {
+    console.log("=== Debug Stats ===");
+    console.log("Planet:", gameState.planetHealth);
+    console.log("Universe:", gameState.universeHealth);
+    console.log("Void:", gameState.voidAttention);
+    console.log("Reality:", gameState.realityStability);
+    console.log("Blessings:", gameState.blessings);
+    console.log("Curses:", gameState.curses);
+  }
+};
 }
 
 // --- AUTO START ---
@@ -1669,6 +1815,7 @@ document.addEventListener("tutorialEnded", () => {
     gameInitialized = true;
     initGame();
   }
+
 });
 
 // 30 second fallback in case tutorial never fires
