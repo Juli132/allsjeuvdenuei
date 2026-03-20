@@ -952,3 +952,220 @@ body {
   opacity: 0;
   transition: opacity 1s ease;
 }
+/* Add to your CSS - Void Dimming Effects */
+
+/* Base dimming effect that scales with void attention */
+#game.void-dim {
+  transition: filter 0.5s ease;
+}
+
+/* Low void (0-30) - Normal */
+#game.void-low {
+  filter: brightness(1);
+}
+
+/* Medium void (31-60) - Slightly dim */
+#game.void-medium {
+  filter: brightness(0.85) contrast(0.95);
+}
+
+/* High void (61-80) - Noticeably dim */
+#game.void-high {
+  filter: brightness(0.7) contrast(0.9);
+  transition: filter 1s ease;
+}
+
+/* Critical void (81-100) - Very dim, controls fading */
+#game.void-critical {
+  filter: brightness(0.5) contrast(0.8) grayscale(0.2);
+  transition: filter 1.5s ease;
+}
+
+/* Fade out controls at critical void */
+#game.void-critical #sidebar button,
+#game.void-critical #terminal button,
+#game.void-critical .choice-btn {
+  opacity: 0.6;
+  transition: opacity 1s ease;
+}
+
+#game.void-critical #sidebar button:hover {
+  opacity: 0.9;
+}
+
+/* Almost invisible at max void */
+#game.void-max {
+  filter: brightness(0.3) contrast(0.7) grayscale(0.4);
+}
+
+#game.void-max #sidebar button,
+#game.void-max #terminal button,
+#game.void-max .choice-btn {
+  opacity: 0.3;
+}
+
+#game.void-max #sidebar button:hover {
+  opacity: 0.6;
+}
+
+/* Void overlay that gets darker */
+#game.void-dim::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#game.void-medium::before {
+  opacity: 0.2;
+}
+
+#game.void-high::before {
+  opacity: 0.4;
+}
+
+#game.void-critical::before {
+  opacity: 0.6;
+}
+
+#game.void-max::before {
+  opacity: 0.8;
+}
+/* Void effects on planet */
+#game.void-critical #planet {
+  opacity: 0.5;
+  filter: brightness(0.3) saturate(0.2);
+  transform: scale(0.6);
+  transition: all 1.5s ease;
+  box-shadow: none;
+}
+
+#game.void-max #planet {
+  opacity: 0;
+  transform: scale(0);
+  transition: all 2s ease;
+}
+
+/* Also fade the moon and ring */
+#game.void-critical #planet::before,
+#game.void-critical #planet::after {
+  opacity: 0.2;
+  transition: all 1s ease;
+}
+
+#game.void-max #planet::before,
+#game.void-max #planet::after {
+  opacity: 0;
+  transform: scale(0);
+}
+
+/* ===== VOID EFFECTS ===== */
+/* Void feels like darkness consuming everything */
+
+/* Medium void (30-60%) - Shadows grow */
+#game.void-medium {
+  filter: brightness(0.9) contrast(0.95);
+}
+
+#game.void-medium #output {
+  text-shadow: 0 0 2px #8a2be2;
+}
+
+/* High void (60-80%) - Screen darkens, edges blur */
+#game.void-high {
+  filter: brightness(0.75) contrast(0.9) blur(0.5px);
+}
+
+#game.void-high #output {
+  text-shadow: 0 0 3px #8a2be2;
+  letter-spacing: 0.5px;
+}
+
+/* Critical void (80-95%) - Heavy darkness, text fragments */
+#game.void-critical {
+  filter: brightness(0.5) contrast(0.8) blur(1px);
+}
+
+#game.void-critical #output div {
+  animation: voidFlicker 2s infinite;
+  letter-spacing: 1px;
+}
+
+@keyframes voidFlicker {
+  0% { opacity: 0.9; text-shadow: 0 0 2px #8a2be2; }
+  50% { opacity: 0.6; text-shadow: 0 0 5px #8a2be2; letter-spacing: 2px; }
+  100% { opacity: 0.9; text-shadow: 0 0 2px #8a2be2; }
+}
+
+/* Maximum void (95-100%) - Almost unreadable, static overlay */
+#game.void-max {
+  filter: brightness(0.3) contrast(0.7) blur(2px);
+}
+
+#game.void-max #output div {
+  animation: voidStatic 0.3s infinite;
+  opacity: 0.5;
+}
+
+@keyframes voidStatic {
+  0% { opacity: 0.4; text-shadow: 0 0 5px #ff00ff; }
+  100% { opacity: 0.6; text-shadow: 0 0 2px #8a2be2; }
+}
+
+/* ===== UNIVERSE EFFECTS ===== */
+/* Universe feels like cosmic decay - stars dying, emptiness */
+
+/* Universe warning - stars dim */
+#game.universe-warning {
+  filter: brightness(0.9) sepia(0.1);
+}
+
+#game.universe-warning #game::before {
+  opacity: 0.4;
+  animation: starFlicker 3s infinite;
+}
+
+/* Universe critical - stars almost gone, cold feeling */
+#game.universe-critical {
+  filter: brightness(0.7) sepia(0.2) hue-rotate(180deg);
+}
+
+#game.universe-critical #game::before {
+  opacity: 0.2;
+  animation: starFade 2s infinite;
+}
+
+@keyframes starFade {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.05; }
+  100% { opacity: 0.2; }
+}
+
+/* Universe dead - cold void, no stars */
+#game.universe-dead {
+  filter: brightness(0.4) grayscale(0.8) hue-rotate(270deg);
+}
+
+#game.universe-dead #game::before {
+  opacity: 0;
+}
+
+/* ===== COMBINED EFFECTS ===== */
+/* When both are bad, everything fades */
+#game.void-critical.universe-critical {
+  filter: brightness(0.4) grayscale(0.5) blur(1px);
+  animation: collapse 3s infinite;
+}
+
+@keyframes collapse {
+  0% { filter: brightness(0.4) grayscale(0.5); }
+  50% { filter: brightness(0.3) grayscale(0.7) blur(2px); }
+  100% { filter: brightness(0.4) grayscale(0.5); }
+}

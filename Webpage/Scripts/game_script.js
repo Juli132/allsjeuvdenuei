@@ -305,19 +305,21 @@ function updateStatsPanel() {
     }
   }
   
-  // Update void visual effects
-  if (gameState.voidAttention > 80) {
-    gameEl.classList.add("reality-bleed", "void-watching");
-    document.getElementById("terminal")?.classList.add("corrupted");
-  } else if (gameState.voidAttention > 50) {
-    gameEl.classList.add("void-watching");
-    gameEl.classList.remove("reality-bleed");
-    document.getElementById("terminal")?.classList.remove("corrupted");
-  } else {
-    gameEl.classList.remove("reality-bleed", "void-watching");
-    document.getElementById("terminal")?.classList.remove("corrupted");
-  }
+ if (gameEl) {
+  gameEl.classList.remove("void-low", "void-medium", "void-high", "void-critical", "void-max", "void-dim");
   
+  if (gameState.voidAttention > 90) {
+    gameEl.classList.add("void-max", "void-dim");
+  } else if (gameState.voidAttention > 80) {
+    gameEl.classList.add("void-critical", "void-dim");
+  } else if (gameState.voidAttention > 60) {
+    gameEl.classList.add("void-high", "void-dim");
+  } else if (gameState.voidAttention > 30) {
+    gameEl.classList.add("void-medium", "void-dim");
+  } else if (gameState.voidAttention > 0) {
+    gameEl.classList.add("void-low", "void-dim");
+  }
+}
   // Update reality effects
   updateRealityEffects();
 }
