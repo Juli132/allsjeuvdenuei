@@ -922,7 +922,7 @@ function read() {
     // Reading stabilizes reality slightly
     gameState.realityStability = Math.min(100, gameState.realityStability + 1);
     
-    addMessage(`I understand a little more. (+${Math.floor(knowledgeGain)} knowledge)`, "player");
+    addMessage(`I understand a little more. (+${knowledgeGain.toFixed(1)} knowledge)`, "player");
 
     const unknownWords = Object.keys(gameState.dictionary).filter(w => !gameState.dictionary[w].known);
     const learnChance = Math.max(0.05, 0.25 - (gameState.strain / 200) + (gameState.blessings * 0.01));
