@@ -28,6 +28,107 @@ let gameState = {
   deepMeditationEndTime: 0
 };
 
+// --- FAINT SYSTEM ---
+let faintActive = false;
+let voidTimerCountdown = null;
+let realityChaosInterval = null;
+
+function triggerFaint() {
+  if (faintActive || gameState.hasEnding) return;
+  
+  faintActive = true;
+  const faintOverlay = document.getElementById("faint-overlay");
+  const faintText = document.getElementById("faint-text");
+  
+  if (!faintOverlay) return;
+  
+  faintOverlay.classList.add("active");
+  faintOverlay.style.opacity = "1";
+  
+  const faintMessages = [
+    "C O N S C I O U S N E S S   F A D I N G . . .",
+    "T H E   S T R A I N   T A K E S   Y O U . . .",
+    "S L E E P   C O M E S . . .",
+    "R E A L I T Y   D I S S O L V E S . . .",
+    "Y O U   F A L L   I N T O   D A R K N E S S . . .",
+    "T H E   S T A R S   G O   D I M . . .",
+    "M I N D   C O L L A P S I N G . . .",
+    "T H E   W E I G H T   I S   T O O   M U C H . . ."
+  ];
+  
+  if (faintText) {
+    faintText.textContent = getRandom(faintMessages);
+    faintText.style.animation = 'none';
+    faintText.offsetHeight;
+    faintText.style.animation = 'fade-text 3s ease-out forwards';
+  }
+  
+  setTimeout(() => {
+    if (faintActive) {
+      faintOverlay.classList.add("blink");
+    }
+  }, 2000);
+  
+  const input = document.getElementById("player-input");
+  const submitBtn = document.getElementById("submit-btn");
+  const actionButtons = ["learn-btn", "pray-btn", "sleep-btn", "meditate-btn", "deep-meditate-btn", "dict-btn"];
+  
+  if (input) input.disabled = true;
+  if (submitBtn) submitBtn.disabled = true;
+  actionButtons.forEach(btnId => {
+    const btn = document.getElementById(btnId);
+    if (btn) btn.disabled = true;
+  });
+  
+  setTimeout(() => {
+    recoverFromFaint();
+  }, 5000);
+}
+
+function recoverFromFaint() {
+  if (!faintActive) return;
+  
+  const faintOverlay = document.getElementById("faint-overlay");
+  
+  if (faintOverlay) {
+    faintOverlay.classList.remove("blink");
+    faintOverlay.style.transition = "opacity 1s ease";
+    faintOverlay.style.opacity = "0";
+    
+    setTimeout(() => {
+      faintOverlay.classList.remove("active");
+      faintOverlay.style.opacity = "";
+      faintOverlay.style.transition = "";
+      
+      const input = document.getElementById("player-input");
+      const submitBtn = document.getElementById("submit-btn");
+      const actionButtons = ["learn-btn", "pray-btn", "sleep-btn", "meditate-btn", "deep-meditate-btn", "dict-btn"];
+      
+      if (input && !gamePaused) input.disabled = false;
+      if (submitBtn && !gamePaused) submitBtn.disabled = false;
+      actionButtons.forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn && !gamePaused) btn.disabled = false;
+      });
+      
+      if (input && !gamePaused) input.focus();
+      
+      addMessage("I wake up. Something changed.", "player");
+      addMessage("The void feels much closer.", "machine");
+      
+      if (Math.random() < 0.4) {
+        addMessage("I don't feel rested at all.", "player");
+        gameState.strain = Math.min(100, gameState.strain + 15);
+        updateStatsPanel();
+      }
+      
+      faintActive = false;
+    }, 1000);
+  } else {
+    faintActive = false;
+  }
+}
+
 // --- AUDIO SYSTEM ---
 let audioEnabled = true;
 let audioCtx = null;
@@ -58,7 +159,6 @@ function initAudio() {
   }
 }
 
-// Deep, atmospheric typing sound (subtle)
 function playTypingSound() {
   if (!audioEnabled || !audioCtx || audioCtx.state !== 'running') return;
   
@@ -89,7 +189,6 @@ function playTypingSound() {
   }
 }
 
-// Eerie, hollow warning sound for errors only
 function playErrorSound() {
   if (!audioEnabled || !audioCtx || audioCtx.state !== 'running') return;
   
@@ -144,13 +243,13 @@ function togglePause() {
     addMessage("═══════════════════════════════", "machine");
     addMessage("      GAME PAUSED", "machine");
     addMessage("═══════════════════════════════", "machine");
-    addMessage("Press P again to resume.", "machine");
+    addMessage("Press ESC to resume.", "machine");
     addMessage("Type /quit to return to menu.", "machine");
     addMessage("═══════════════════════════════", "machine");
     
     if (input) {
       input.disabled = true;
-      input.placeholder = "Game paused - press P to resume";
+      input.placeholder = "Game paused - press ESC to resume";
     }
     if (submitBtn) submitBtn.disabled = true;
     
@@ -361,12 +460,65 @@ function getCyclePhase() {
   return "NEUTRAL";
 }
 
+// Reality Chaos Effects
+// Reality Chaos Effects
+function updateRealityChaos() {
+  const gameEl = document.getElementById("game");
+  if (!gameEl) return;
+  
+  // REMOVE ALL chaos classes first (this is the key fix)
+  gameEl.classList.remove(
+    "reality-chaos-mild", 
+    "reality-chaos-moderate", 
+    "reality-chaos-severe", 
+    "reality-chaos-extreme"
+  );
+  
+  // Only add chaos if reality is below 60%
+  if (gameState.realityStability < 60 && !gameState.hasEnding) {
+    // Progressive chaos based on how low reality is
+    if (gameState.realityStability < 10) {
+      gameEl.classList.add("reality-chaos-extreme");
+    } else if (gameState.realityStability < 20) {
+      gameEl.classList.add("reality-chaos-severe");
+    } else if (gameState.realityStability < 30) {
+      gameEl.classList.add("reality-chaos-moderate");
+    } else if (gameState.realityStability < 60) {
+      gameEl.classList.add("reality-chaos-mild");
+    }
+    
+    // Random chaos messages (only below 30% for better pacing)
+    if (gameState.realityStability < 30 && Math.random() < 0.03 && !gameState.hasEnding) {
+      const chaosMessages = [
+        "The screen flickers...",
+        "Reality ripples around you...",
+        "Colors bleed into each other...",
+        "The terminal warps...",
+        "Nothing feels solid anymore...",
+        "The text is melting...",
+        "Your vision distorts...",
+        "The world bends...",
+        "Shapes lose meaning...",
+        "Time feels wrong...",
+        "The edges blur...",
+        "Something is breaking..."
+      ];
+      addMessage(getRandom(chaosMessages), "machine");
+    }
+  }
+  // If reality is >= 60, we already removed all chaos classes above
+}
+
+// Update reality visual effects
 // Update reality visual effects
 function updateRealityEffects() {
   const gameEl = document.getElementById("game");
   if (!gameEl) return;
   
   gameEl.classList.remove("reality-mild", "reality-moderate", "reality-severe");
+  
+  // Update chaos effects based on current reality
+  updateRealityChaos();
   
   if (gameState.realityStability < 30) {
     gameEl.classList.add("reality-severe");
@@ -415,8 +567,6 @@ function updateStatsPanel() {
   if (statPhase) statPhase.textContent = currentPhase;
   
   gameState.currentPhase = currentPhase;
-
-
 
   planetBar.style.width = `${gameState.planetHealth}%`;
   planetBar.style.background = gameState.planetHealth > 70 ? "#0f0" : gameState.planetHealth > 40 ? "#ff0" : gameState.planetHealth > 20 ? "#f90" : "#f00";
@@ -571,7 +721,6 @@ function speakWord(word) {
   const wordPower = getWordPower(word);
   const misfireChance = Math.max(0, (gameState.strain > 60 ? 0.4 : 0) - (gameState.blessings * 0.02));
   
-  // Scale base effects by word power
   gameState.universeHealth = Math.max(0, gameState.universeHealth - (0.2 * wordPower));
   gameState.voidAttention = Math.min(100, gameState.voidAttention + (0.5 * wordPower));
   
@@ -597,9 +746,7 @@ function speakWord(word) {
       const oldKnowledge = gameState.knowledge;
       const oldReality = gameState.realityStability;
       
-      // Store original effect and apply scaled version
       const originalEffect = entry.event.effect;
-      const originalVoidBefore = gameState.voidAttention;
       
       const scaledEffect = (s) => {
         const planetBefore = s.planetHealth;
@@ -648,8 +795,6 @@ function speakWord(word) {
       showStatChange("Strain", oldStrain, gameState.strain);
       showStatChange("Void", oldVoid, gameState.voidAttention);
       showStatChange("Knowledge", oldKnowledge, gameState.knowledge);
-      
-      // No success sound - silence is golden
 
     } else {
       if (Math.random() < misfireChance) {
@@ -731,8 +876,6 @@ function speakWord(word) {
           showStatChange("Knowledge", oldKnowledge, gameState.knowledge);
           showStatChange("Blessings", oldBlessings, gameState.blessings);
           showStatChange("Reality", oldReality, gameState.realityStability);
-          
-          // No success sound - silence is golden
           
         } else {
           addMessage(getRandom(machineReactions.nothing), "machine");
@@ -847,7 +990,10 @@ function applyStrain() {
 }
 
 function forcedSleep() {
-  lockInput(4000);
+  if (faintActive) return;
+  
+  triggerFaint();
+  lockInput(5000);
   addMessage("I can't keep my eyes open...", "player");
   addMessage("Your mind collapses from strain.", "machine");
 
@@ -855,6 +1001,11 @@ function forcedSleep() {
   let eventsRun = 0;
   
   let interval = setInterval(() => {
+    if (!faintActive) {
+      clearInterval(interval);
+      return;
+    }
+    
     const event = getRandom(eventPool);
     
     const oldPlanet = gameState.planetHealth;
@@ -877,21 +1028,14 @@ function forcedSleep() {
     eventsRun++;
     if (eventsRun >= eventsToRun) {
       clearInterval(interval);
+      
       const strainRecovery = 20 + Math.floor(Math.random() * 20);
       gameState.strain = Math.max(10, gameState.strain - strainRecovery);
-      
       gameState.voidAttention = Math.min(100, gameState.voidAttention + 15);
       gameState.curses = Math.min(20, gameState.curses + 2);
       
       clampStats();
       updateStatsPanel();
-      addMessage("I wake up. Something changed.", "player");
-      addMessage("The void feels much closer.", "machine");
-      
-      if (Math.random() < 0.4) {
-        addMessage("I don't feel rested at all.", "player");
-        gameState.strain = Math.min(100, gameState.strain + 15);
-      }
     }
   }, 800);
 }
@@ -952,6 +1096,10 @@ function sleep() {
       
       addMessage("I feel a bit better, but not great.", "player");
       playErrorSound();
+      
+      if (effectiveness < 0.3 && gameState.strain > 80) {
+        triggerFaint();
+      }
     } else {
       const event = getRandom(eventPool);
       
@@ -1000,7 +1148,6 @@ function sleep() {
       } else {
         addMessage("I feel more stable now.", "player");
       }
-      // No success sound - silence is golden
     }
 
     clampStats();
@@ -1041,7 +1188,6 @@ function pray() {
       addMessage("That felt right.", "player");
       gameState.blessings = Math.min(20, gameState.blessings + 1);
       gameState.realityStability = Math.min(100, gameState.realityStability + 1);
-      // No success sound - silence is golden
     }
 
     showStatChange("Planet", oldPlanet, gameState.planetHealth);
@@ -1222,7 +1368,6 @@ function meditate() {
       } else {
         addMessage("The meditation did nothing...", "player");
       }
-      // No success sound - silence is golden
     }
     
     gameState.strain += 2;
@@ -1239,7 +1384,6 @@ function meditate() {
   }, 2000);
 }
 
-// Deep meditation function
 function deepMeditate() {
   if (gameState.strain > 70) {
     addMessage("Too strained for deep meditation.", "player");
@@ -1292,7 +1436,6 @@ function deepMeditate() {
       addMessage(`The void recedes dramatically! (-${voidReduction})`, "machine");
       addMessage("I feel one with the cosmos.", "player");
       addMessage("Word discovery is harder for a while, but my mind is protected.", "player");
-      // No success sound - silence is golden
     }
     
     gameState.strain += 5;
@@ -1381,6 +1524,12 @@ function toggleDictionary() {
 function checkEndings() {
   if (gameState.hasEnding) return;
   
+  // Clear void timer if ending is about to trigger
+  if (voidTimerCountdown) {
+    clearTimeout(voidTimerCountdown);
+    voidTimerCountdown = null;
+  }
+  
   if (gameState.planetHealth >= 100 && 
       gameState.voidAttention <= 3 && 
       gameState.blessings >= 15 && 
@@ -1390,7 +1539,10 @@ function checkEndings() {
     triggerEnding("good");
   }
   else if (gameState.voidAttention >= 100 && gameState.cycles >= 15) {
-    triggerEnding("void");
+    // This is now handled by the timer, but keep as fallback
+    if (!voidTimerCountdown) {
+      triggerEnding("void");
+    }
   }
   else if (gameState.curses >= 12 && gameState.strain >= 90 && gameState.cycles >= 25) {
     triggerEnding("reality");
@@ -1415,6 +1567,12 @@ function checkEndings() {
 function triggerEnding(type) {
   gameState.hasEnding = true;
   inputLocked = true;
+  
+  // Clear void timer if it exists
+  if (voidTimerCountdown) {
+    clearTimeout(voidTimerCountdown);
+    voidTimerCountdown = null;
+  }
   
   if (voidTimer) clearInterval(voidTimer);
   if (transmissionTimer) clearInterval(transmissionTimer);
@@ -1519,6 +1677,21 @@ function checkHealth() {
 
 // --- RESET ---
 function resetGame() {
+  if (faintActive) {
+    const faintOverlay = document.getElementById("faint-overlay");
+    if (faintOverlay) {
+      faintOverlay.classList.remove("active", "blink");
+      faintOverlay.style.opacity = "";
+      faintOverlay.style.transition = "";
+    }
+    faintActive = false;
+  }
+  
+  if (voidTimerCountdown) {
+    clearTimeout(voidTimerCountdown);
+    voidTimerCountdown = null;
+  }
+  
   gameState = {
     knowledge: 0,
     dictionary: {},
@@ -1578,7 +1751,7 @@ function handleCommand(input) {
   if (cmd === "/quit") return quitToMenu();
   if (cmd === "/resume") {
     if (gamePaused) togglePause();
-    else addMessage("Game is not paused. Press P to pause.", "machine");
+    else addMessage("Game is not paused. Press ESC to pause.", "machine");
     return;
   }
   if (cmd === "/sound") {
@@ -1703,7 +1876,6 @@ function triggerAmbientEvent() {
   }
 }
 
-// Start ambient timer
 function startAmbientTimer() {
   if (ambientTimer) clearInterval(ambientTimer);
   ambientTimer = setInterval(() => {
@@ -1729,7 +1901,24 @@ function startTimers() {
     const oldVoid = gameState.voidAttention;
     gameState.voidAttention = Math.min(100, gameState.voidAttention + 0.5);
     
-    if (gameState.voidAttention > 70 && Math.random() < 0.3) {
+    // Check if void reached 100
+    if (gameState.voidAttention >= 100 && !voidTimerCountdown && !gameState.hasEnding) {
+      voidTimerCountdown = setTimeout(() => {
+        if (gameState.voidAttention >= 100 && gameState.cycles >= 15) {
+          triggerEnding("void");
+        }
+        voidTimerCountdown = null;
+      }, 3000);
+      addMessage("The void is at 100%! You have 3 seconds to act...", "machine");
+    }
+    
+    // Reset countdown if void drops below 100
+    if (gameState.voidAttention < 100 && voidTimerCountdown) {
+      clearTimeout(voidTimerCountdown);
+      voidTimerCountdown = null;
+    }
+    
+    if (gameState.voidAttention > 70 && Math.random() < 0.3 && !gameState.hasEnding && !voidTimerCountdown) {
       addMessage(getRandom(voidMessages), "machine");
     }
     
@@ -1823,7 +2012,8 @@ function startTimers() {
 
 // --- KEYBOARD HANDLER ---
 function handleKeyPress(e) {
-  if (e.key === 'p' || e.key === 'P') {
+  // ESC key for pause (code 27)
+  if (e.key === 'Escape' || e.key === 'Esc') {
     e.preventDefault();
     togglePause();
   }
@@ -1863,7 +2053,7 @@ function initGame() {
   addMessage("The void watches...", "machine");
   addMessage("The cosmic cycle affects sleep and meditation.", "machine");
   addMessage("Watch the PHASE indicator for current cycle effects.", "machine");
-  addMessage("Press P to pause/resume the game.", "machine");
+  addMessage("Press ESC to pause/resume the game.", "machine");
   addMessage("Commands: /stats, /sound, /clear, /quit (when paused)", "machine");
 
   const submitBtn = document.getElementById("submit-btn");

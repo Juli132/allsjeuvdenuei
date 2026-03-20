@@ -21,7 +21,8 @@ Words have 10 uses. After that, they die.
 /deep     - Major void reduction. Costs 50 knowledge.
 /stats    - See all values.
 /clear    - Clear terminal.
-press p to pause and p again to resume. 
+/sound    - enable/ disable sound
+press ESC to pause and ESC again to resume. 
 
 > COSMIC CYCLE
 Watch the PHASE indicator:
