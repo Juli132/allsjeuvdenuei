@@ -1,4 +1,4 @@
-/* Body / background */
+/* ==================== BASE STYLES ==================== */
 body {
   margin: 0;
   padding: 0;
@@ -7,9 +7,10 @@ body {
   font-family: monospace;
   height: 100vh;
   overflow: hidden;
+  animation: flicker 10s infinite;
 }
 
-/* Intro overlay */
+/* ==================== INTRO OVERLAY ==================== */
 #intro {
   position: absolute;
   top: 0;
@@ -32,7 +33,7 @@ body {
   color: green;
 }
 
-/* Main game container */
+/* ==================== MAIN GAME ==================== */
 #game {
   position: relative;
   width: 100vw;
@@ -41,26 +42,80 @@ body {
   background: black;
 }
 
-/* Planet - centered */
+/* Planet */
 #background {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 #planet {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: radial-gradient(circle, #0066ff, #000033);
+  transition: all 0.5s ease;
+  background: radial-gradient(circle at 30% 30%, #0066ff, #000033);
   box-shadow: 0 0 30px rgba(0, 102, 255, 0.3);
+  position: relative;
 }
 
-/* Output text - clean like intro, positioned left but not too far */
+/* Moon & Ring */
+#planet::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #aaa;
+  border-radius: 50%;
+  top: -20px;
+  left: 80px;
+  box-shadow: 0 0 10px #ccc;
+  animation: orbit 10s linear infinite;
+}
+
+#planet::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 40px;
+  border: 2px solid rgba(150, 150, 150, 0.171);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotateX(75deg) rotateZ(15deg);
+  box-shadow: 0 0 20px rgba(200, 200, 200, 0.2);
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+}
+
+/* Planet Health States */
+#planet.warning {
+  background: radial-gradient(circle at 30% 30%, #ffc107, #b26500);
+  box-shadow: 0 0 40px #ffc107;
+}
+
+#planet.critical {
+  background: radial-gradient(circle at 30% 30%, #f44336, #8b0000);
+  box-shadow: 0 0 50px #f44336;
+  animation: pulse 1s infinite;
+}
+
+#planet.dead {
+  background: radial-gradient(circle at 30% 30%, #666, #222);
+  box-shadow: 0 0 20px #666;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; box-shadow: 0 0 70px #f44336; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ==================== OUTPUT TEXT ==================== */
 #output {
   position: absolute;
   top: 80px;
@@ -70,7 +125,6 @@ body {
   text-align: left;
   font-size: 1.2em;
   line-height: 1.5em;
-  color: lightblue; /* Match tutorial machine color */
   z-index: 1;
   padding: 0;
   background: transparent;
@@ -80,7 +134,6 @@ body {
   font-family: monospace;
 }
 
-/* Style for individual messages - clean like intro */
 #output div {
   margin-bottom: 8px;
   padding: 0;
@@ -89,17 +142,15 @@ body {
   word-wrap: break-word;
 }
 
-/* Player messages in light green */
 #output div[data-speaker="player"] {
   color: #90EE90;
 }
 
-/* Machine messages in light blue (like tutorial) */
 #output div[data-speaker="machine"] {
   color: #ADD8E6;
 }
 
-/* Sidebar - top right */
+/* ==================== SIDEBAR ==================== */
 #sidebar {
   position: absolute;
   top: 20px;
@@ -146,7 +197,7 @@ body {
   border-radius: 3px;
 }
 
-/* Stats panel - clean and compact */
+/* ==================== STATS PANEL ==================== */
 #stats-panel {
   position: absolute;
   top: 20px;
@@ -190,7 +241,7 @@ body {
   transition: width 0.3s;
 }
 
-/* Terminal - fixed at bottom */
+/* ==================== TERMINAL ==================== */
 #terminal {
   position: fixed;
   bottom: 0;
@@ -239,7 +290,7 @@ body {
   color: black;
 }
 
-/* Tutorial overlay */
+/* ==================== TUTORIAL ==================== */
 #tutorial {
   position: absolute;
   top: 0;
@@ -272,11 +323,9 @@ body {
   overflow-y: auto;
   padding: 25px;
   border: 1px solid lightblue;
-  border-radius: 0;
   background: rgba(0, 0, 0, 0.7);
 }
 
-/* Tutorial choices */
 #tutorial-choices {
   display: none;
   gap: 25px;
@@ -292,7 +341,6 @@ body {
   font-family: monospace;
   font-size: 1.2em;
   cursor: pointer;
-  transition: all 0.3s;
   border-radius: 0;
   font-weight: bold;
   min-width: 150px;
@@ -303,35 +351,7 @@ body {
   color: black;
 }
 
-/* HIGHLIGHT EFFECT */
-.highlight {
-  position: relative !important;
-  animation: glowPulse 1.5s infinite !important;
-  z-index: 100 !important;
-  pointer-events: auto !important;
-}
-
-#learn-btn.highlight,
-#pray-btn.highlight,
-#knowledge.highlight {
-  border: 2px solid #ff0 !important;
-  color: #ff0 !important;
-  background: black !important;
-  box-shadow: 0 0 20px 5px #ff0 !important;
-}
-
-#terminal.highlight {
-  border-top: 2px solid #ff0 !important;
-  box-shadow: 0 -5px 20px 0 #ff0 !important;
-}
-
-@keyframes glowPulse {
-  0% { box-shadow: 0 0 10px 2px #ff0; }
-  50% { box-shadow: 0 0 25px 10px #ff0; }
-  100% { box-shadow: 0 0 10px 2px #ff0; }
-}
-
-/* Dictionary panel */
+/* ==================== DICTIONARY ==================== */
 #dictionary-panel {
   position: absolute;
   right: 220px;
@@ -361,12 +381,6 @@ body {
   color: #ADD8E6;
 }
 
-.word-type {
-  font-size: 0.8em;
-  color: #666;
-  margin-left: 5px;
-}
-
 .word-desc {
   font-size: 0.9em;
   color: #888;
@@ -374,798 +388,329 @@ body {
   padding-left: 10px;
 }
 
-/* Scrollbar styling */
-#tutorial-output::-webkit-scrollbar,
-#output::-webkit-scrollbar,
-#dictionary-panel::-webkit-scrollbar {
-  width: 8px;
-}
 
-#tutorial-output::-webkit-scrollbar-track,
-#output::-webkit-scrollbar-track,
-#dictionary-panel::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-#tutorial-output::-webkit-scrollbar-thumb,
-#output::-webkit-scrollbar-thumb,
-#dictionary-panel::-webkit-scrollbar-thumb {
-  background: green;
-  border-radius: 0;
-}
-/* Add twinkling stars */
-/* Dense star field */
+/* STARS BACKGROUND - TRUE RANDOM SCATTER  */
 #game::before {
   content: '';
   position: absolute;
   width: 100%;
   height: 100%;
   background-image: 
-    /* White stars - small */
-    radial-gradient(1px 1px at 5px 15px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 25px 85px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 42px 162px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 78px 234px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 112px 56px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 145px 321px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 178px 98px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 198px 267px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 223px 143px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 267px 189px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 289px 312px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 312px 78px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 345px 234px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 378px 156px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 398px 289px, #fff, rgba(0,0,0,0)),
+    /* ===== WHITE STARS - SMALL (1px) ===== */
+    radial-gradient(1px 1px at 1% 7%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 2% 23%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 3% 45%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 4% 68%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 5% 82%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 6% 94%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 7% 12%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 8% 34%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 9% 56%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 10% 77%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 11% 89%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 12% 41%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 13% 63%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 14% 19%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 15% 52%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 16% 28%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 17% 74%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 18% 36%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 19% 91%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 20% 48%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 21% 15%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 22% 59%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 23% 83%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 24% 31%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 25% 67%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 26% 44%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 27% 9%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 28% 72%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 29% 54%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 30% 26%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 31% 86%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 32% 38%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 33% 61%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 34% 93%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 35% 17%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 36% 49%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 37% 22%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 38% 64%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 39% 8%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 40% 79%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 41% 33%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 42% 55%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 43% 41%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 44% 13%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 45% 88%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 46% 29%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 47% 73%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 48% 46%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 49% 19%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 50% 62%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 51% 35%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 52% 97%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 53% 4%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 54% 77%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 55% 52%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 56% 23%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 57% 68%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 58% 41%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 59% 14%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 60% 86%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 61% 57%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 62% 31%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 63% 92%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 64% 48%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 65% 26%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 66% 69%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 67% 9%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 68% 84%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 69% 38%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 70% 73%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 71% 19%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 72% 54%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 73% 44%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 74% 80%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 75% 11%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 76% 66%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 77% 32%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 78% 49%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 79% 91%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 80% 23%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 81% 59%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 82% 37%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 83% 12%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 84% 76%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 85% 45%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 86% 28%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 87% 67%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 88% 88%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 89% 5%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 90% 53%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 91% 35%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 92% 70%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 93% 16%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 94% 61%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 95% 83%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 96% 40%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 97% 25%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 98% 79%, #fff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 99% 48%, #fff, rgba(0,0,0,0)),
     
-    /* Medium white stars */
-    radial-gradient(2px 2px at 18px 312px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 67px 89px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 98px 367px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 134px 201px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 187px 112px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 223px 378px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 278px 156px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 301px 267px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 334px 89px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 367px 201px, #fff, rgba(0,0,0,0)),
+    /* ===== MEDIUM WHITE STARS (2px) ===== */
+    radial-gradient(2px 2px at 5% 33%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 12% 78%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 18% 91%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 23% 42%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 28% 15%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 33% 67%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 38% 24%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 43% 89%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 48% 53%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 53% 37%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 58% 72%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 63% 19%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 68% 84%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 73% 48%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 78% 63%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 83% 29%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 88% 55%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 93% 41%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 97% 86%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 9% 52%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 21% 8%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 32% 96%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 44% 71%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 55% 44%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 66% 17%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 77% 90%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 86% 35%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 94% 69%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 15% 64%, #fff, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 27% 31%, #fff, rgba(0,0,0,0)),
     
-    /* Blue stars */
-    radial-gradient(2px 2px at 45px 45px, #aaf, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 156px 278px, #8af, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 201px 134px, #caf, rgba(0,0,0,0)),
-    radial-gradient(3px 3px at 289px 312px, #6cf, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 323px 167px, #9cf, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 356px 223px, #adf, rgba(0,0,0,0)),
+    /* ===== BLUE STARS ===== */
+    radial-gradient(2px 2px at 7% 42%, #aaf, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 16% 86%, #8af, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 24% 53%, #9cf, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 31% 18%, #adf, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 39% 72%, #7cf, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 47% 37%, #6cf, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 54% 91%, #9af, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 62% 44%, #8cf, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 69% 28%, #bdf, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 76% 65%, #cdf, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 83% 12%, #acf, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 91% 79%, #9ef, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 98% 33%, #7af, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 11% 95%, #8cf, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 35% 5%, #adf, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 59% 82%, #6cf, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 74% 49%, #9cf, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 89% 24%, #bdf, rgba(0,0,0,0)),
     
-    /* Yellow/Red stars (warmer) */
-    radial-gradient(2px 2px at 78px 289px, #ffa, rgba(0,0,0,0)),
-    radial-gradient(3px 3px at 145px 98px, #fda, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 189px 345px, #fca, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 234px 178px, #ff8, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 267px 223px, #fd7, rgba(0,0,0,0)),
+    /* ===== WARM YELLOW/ORANGE STARS ===== */
+    radial-gradient(2px 2px at 4% 91%, #ffa, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 13% 38%, #fca, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 22% 64%, #fd8, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 29% 13%, #fea, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 37% 79%, #ffc, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 45% 47%, #fda, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 52% 25%, #fc8, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 60% 69%, #ffb, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 67% 34%, #fd7, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 75% 82%, #fe8, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 82% 58%, #ff9, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 90% 41%, #fca, rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 96% 16%, #fd9, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 19% 22%, #ffb, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 43% 84%, #fda, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 68% 11%, #fe8, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 85% 93%, #fc9, rgba(0,0,0,0)),
     
-    /* Large bright stars */
-    radial-gradient(4px 4px at 112px 312px, #fff, rgba(0,0,0,0) 80%),
-    radial-gradient(4px 4px at 334px 98px, #ffd, rgba(0,0,0,0) 80%),
-    radial-gradient(3px 3px at 198px 267px, #fef, rgba(0,0,0,0) 80%),
+    /* ===== LARGE BRIGHT STARS (3-4px) ===== */
+    radial-gradient(3px 3px at 8% 29%, #fff, rgba(0,0,0,0) 80%),
+    radial-gradient(3px 3px at 19% 71%, #ffd, rgba(0,0,0,0) 80%),
+    radial-gradient(3px 3px at 28% 45%, #ffe, rgba(0,0,0,0) 80%),
+    radial-gradient(3px 3px at 36% 92%, #fef, rgba(0,0,0,0) 80%),
+    radial-gradient(3px 3px at 44% 18%, #fff, rgba(0,0,0,0) 80%),
+    radial-gradient(3px 3px at 53% 63%, #ffc, rgba(0,0,0,0) 80%),
+    radial-gradient(3px 3px at 61% 37%, #ffd, rgba(0,0,0,0) 80%),
+    radial-gradient(3px 3px at 69% 84%, #fef, rgba(0,0,0,0) 80%),
+    radial-gradient(4px 4px at 77% 52%, #fff, rgba(0,0,0,0) 80%),
+    radial-gradient(4px 4px at 84% 14%, #ffd, rgba(0,0,0,0) 80%),
+    radial-gradient(4px 4px at 92% 76%, #ffe, rgba(0,0,0,0) 80%),
+    radial-gradient(4px 4px at 97% 94%, #fff, rgba(0,0,0,0) 80%),
+    radial-gradient(3px 3px at 48% 3%, #fff, rgba(0,0,0,0) 80%),
+    radial-gradient(3px 3px at 73% 27%, #ffd, rgba(0,0,0,0) 80%),
+    radial-gradient(4px 4px at 14% 59%, #fff, rgba(0,0,0,0) 80%),
+    radial-gradient(4px 4px at 56% 96%, #ffe, rgba(0,0,0,0) 80%),
     
-    /* Tiny distant stars */
-    radial-gradient(1px 1px at 15px 389px, #999, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 87px 401px, #aaa, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 154px 412px, #bbb, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 221px 398px, #999, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 278px 405px, #aaa, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 345px 389px, #bbb, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 389px 401px, #999, rgba(0,0,0,0)),
-    
-    /* More white stars - small */
-    radial-gradient(1px 1px at 412px 45px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 398px 112px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 378px 178px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 401px 234px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 389px 289px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 412px 334px, #fff, rgba(0,0,0,0)),
-    
-    /* Cluster in one area (galaxy effect) */
-    radial-gradient(2px 2px at 450px 150px, #bdf, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 455px 155px, #fff, rgba(0,0,0,0)),
-    radial-gradient(3px 3px at 460px 145px, #cdf, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 465px 160px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 470px 140px, #acf, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 475px 165px, #fff, rgba(0,0,0,0)),
-    
-    /* Another cluster */
-    radial-gradient(2px 2px at 50px 450px, #fdb, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 55px 455px, #fff, rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 60px 445px, #fca, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 65px 460px, #fff, rgba(0,0,0,0));
+    /* ===== TINY DISTANT STARS (0.5-1px, dimmer) ===== */
+    radial-gradient(1px 1px at 6% 47%, #666, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 17% 83%, #777, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 25% 11%, #888, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 34% 66%, #777, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 42% 34%, #888, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 51% 98%, #666, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 59% 21%, #777, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 68% 55%, #888, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 74% 72%, #777, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 81% 89%, #666, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 87% 43%, #888, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 95% 62%, #777, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 3% 62%, #888, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 41% 5%, #777, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 63% 79%, #666, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 86% 33%, #888, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 12% 76%, #777, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 49% 14%, #888, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 78% 98%, #666, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 92% 51%, #777, rgba(0,0,0,0));
   
-  background-repeat: repeat;
-  background-size: 500px 500px; /* Larger pattern so stars don't repeat too obviously */
-  opacity: 0.7;
-  animation: twinkle 5s infinite;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  opacity: 0.85;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Second layer for parallax effect (some stars twinkle at different rates) */
+/* Remove the second layer */
 #game::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    radial-gradient(1px 1px at 120px 70px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 220px 170px, rgba(200,220,255,0.8), rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 320px 270px, rgba(255,255,200,0.8), rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 420px 370px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
-    radial-gradient(2px 2px at 520px 470px, rgba(220,220,255,0.8), rgba(0,0,0,0));
-  background-repeat: repeat;
-  background-size: 600px 600px;
-  opacity: 0.4;
-  animation: twinkle 3s infinite reverse; /* Different timing */
-  pointer-events: none;
-  z-index: 0;
+  content: none;
 }
 
-@keyframes twinkle {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
+/* ==================== UNIVERSE HEALTH EFFECTS - WIDE THRESHOLDS ==================== */
+/* Only change when things are ACTUALLY bad */
+#game.universe-healthy::before { 
+  opacity: 0.8; 
+  filter: brightness(1); 
 }
 
-/* Add a ring around the planet */
-#planet::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200px;
-  height: 40px;
-  border: 2px solid rgba(150, 150, 150, 0.171);
-  border-radius: 50%;
-  transform: translate(-50%, -50%) rotateX(75deg) rotateZ(15deg);
-  box-shadow: 0 0 20px rgba(200, 200, 200, 0.2);
+/* 80-100% - Normal. No change. */
+#game.universe-mild::before { 
+  opacity: 0.78; 
+  filter: brightness(0.98); 
 }
 
-/* Add a tiny moon */
-#planet::before {
-  content: '';
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: #aaa;
-  border-radius: 50%;
-  top: -20px;
-  left: 80px;
-  box-shadow: 0 0 10px #cccccc;
-  animation: orbit 10s linear infinite;
+/* 60-80% - Slightly dim. Noticeable but not alarming */
+#game.universe-warning::before { 
+  opacity: 0.7; 
+  filter: brightness(0.9); 
 }
 
-@keyframes orbit {
-  from { transform: rotate(0deg) translateX(80px) rotate(0deg); }
-  to { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+/* 40-60% - Clearly dim. Something is wrong */
+#game.universe-critical::before { 
+  opacity: 0.55; 
+  filter: brightness(0.8); 
 }
 
-/* Update planet to change based on health */
-#planet {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  transition: all 0.5s ease;
-  box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+/* 20-40% - Very dim. The universe is dying */
+#game.universe-severe::before { 
+  opacity: 0.35; 
+  filter: brightness(0.65); 
 }
 
-/* Health states - you'd update these classes via JavaScript */
-#planet.healthy {
-  background: radial-gradient(circle at 30% 30%, #4caf50, #1b5e20);
-  box-shadow: 0 0 40px #4caf50;
+/* 0-20% - Almost gone. The end is near */
+#game.universe-dead::before { 
+  opacity: 0.15; 
+  filter: brightness(0.45); 
 }
 
-#planet.warning {
-  background: radial-gradient(circle at 30% 30%, #ffc107, #b26500);
-  box-shadow: 0 0 40px #ffc107;
-}
+/* ==================== VOID EFFECTS ==================== */
+#game.void-low { filter: brightness(1); }
+#game.void-medium { filter: brightness(0.95); }
+#game.void-medium #output { text-shadow: 0 0 1px #8a2be2; }
+#game.void-high { filter: brightness(0.85); }
+#game.void-high #output { text-shadow: 0 0 2px #8a2be2; }
+#game.void-critical { filter: brightness(0.7); }
+#game.void-max { filter: brightness(0.55); }
 
-#planet.critical {
-  background: radial-gradient(circle at 30% 30%, #f44336, #8b0000);
-  box-shadow: 0 0 50px #f44336;
-  animation: pulse 1s infinite;
-}
+/* Void Planet Effects */
+#game.void-critical #planet { opacity: 0.7; filter: brightness(0.6); transform: scale(0.85); }
+#game.void-max #planet { opacity: 0.4; transform: scale(0.6); }
 
-#planet.dead {
-  background: radial-gradient(circle at 30% 30%, #666, #222);
-  box-shadow: 0 0 20px #666;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* Add to your existing CSS */
-
-/* Void attention visual effects */
-#game.void-watching::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-              rgba(0,0,0,0) 0%, 
-              rgba(138, 43, 226, 0.1) 50%,
-              rgba(0,0,0,0.8) 100%);
-  pointer-events: none;
-  opacity: 0.5;
-  transition: opacity 1s;
-  z-index: 5;
-  mix-blend-mode: multiply;
-}
-
-/* Reality bleed effect */
-#game.reality-bleed {
-  animation: glitch 8s infinite;
-}
-
-@keyframes glitch {
-  0% { filter: hue-rotate(0deg) brightness(1); }
-  2% { filter: hue-rotate(90deg) brightness(1.2); transform: skew(0.5deg, 0.2deg); }
-  4% { filter: hue-rotate(0deg) brightness(1); transform: skew(0); }
-  96% { filter: hue-rotate(0deg) brightness(1); }
-  98% { filter: hue-rotate(-90deg) brightness(0.8); transform: skew(-0.3deg, -0.1deg); }
-  100% { filter: hue-rotate(0deg) brightness(1); transform: skew(0); }
-}
-
-/* Screen flicker */
+/* ==================== OTHER EFFECTS ==================== */
 @keyframes flicker {
   0% { opacity: 1; }
-  2% { opacity: 0.9; }
+  2% { opacity: 0.98; }
   4% { opacity: 1; }
   96% { opacity: 1; }
-  98% { opacity: 0.95; }
+  98% { opacity: 0.99; }
   100% { opacity: 1; }
 }
 
-body {
-  animation: flicker 10s infinite;
+.highlight {
+  position: relative !important;
+  animation: glowPulse 1.5s infinite !important;
+  z-index: 100 !important;
 }
 
-/* Terminal corruption */
-#terminal.corrupted input {
-  color: #ff00ff;
-  border-color: #ff00ff;
-  animation: textFlicker 0.5s infinite;
+#learn-btn.highlight, #pray-btn.highlight, #knowledge.highlight {
+  border: 2px solid #ff0 !important;
+  color: #ff0 !important;
+  background: black !important;
+  box-shadow: 0 0 20px 5px #ff0 !important;
 }
 
-#terminal.corrupted button {
-  border-color: #ff00ff;
-  color: #ff00ff;
+#terminal.highlight {
+  border-top: 2px solid #ff0 !important;
+  box-shadow: 0 -5px 20px 0 #ff0 !important;
 }
 
-#terminal.corrupted button:hover {
-  background: #ff00ff;
-  color: black;
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 10px 2px #ff0; }
+  50% { box-shadow: 0 0 25px 10px #ff0; }
+  100% { box-shadow: 0 0 10px 2px #ff0; }
 }
 
-@keyframes textFlicker {
-  0% { opacity: 1; text-shadow: 0 0 5px #ff00ff; }
-  25% { opacity: 0.7; text-shadow: 0 0 10px #ff00ff; }
-  50% { opacity: 1; text-shadow: 0 0 5px #ff00ff; }
-  75% { opacity: 0.8; text-shadow: 0 0 8px #ff00ff; }
-  100% { opacity: 1; text-shadow: 0 0 5px #ff00ff; }
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
-
-/* Creepy messages effect */
-#output div[data-speaker="machine"]:contains("TRANSMISSION") {
-  color: #8a2be2;
-  font-style: italic;
-  animation: pulse 3s infinite;
-}
-
-#output div[data-speaker="machine"]:contains("void") {
-  color: #9400d3;
-  text-shadow: 0 0 5px #8a2be2;
-}
-
-/* Mouse tracking for shadow effect */
-#game {
-  --mouse-x: 50%;
-  --mouse-y: 50%;
-}
-
-/* Static overlay at high void */
-#game.void-watching::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0,0,0,0) 0px,
-    rgba(138,43,226,0.03) 1px,
-    rgba(0,0,0,0) 2px
-  );
-  pointer-events: none;
-  z-index: 4;
-  animation: static 0.2s infinite;
-}
-
-@keyframes static {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(2px); }
-}
-
-/* Update planet to change based on health */
-#planet {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  transition: all 0.5s ease;
-  box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
-  position: relative;
-}
-
-/* Health states - add these classes via JavaScript */
-#planet.healthy {
-  background: radial-gradient(circle at 30% 30%, #4caf50, #1b5e20);
-  box-shadow: 0 0 40px #4caf50;
-}
-
-#planet.warning {
-  background: radial-gradient(circle at 30% 30%, #ffc107, #b26500);
-  box-shadow: 0 0 40px #ffc107;
-}
-
-#planet.critical {
-  background: radial-gradient(circle at 30% 30%, #f44336, #8b0000);
-  box-shadow: 0 0 50px #f44336;
-  animation: pulse 1s infinite;
-}
-
-#planet.dead {
-  background: radial-gradient(circle at 30% 30%, #666, #222);
-  box-shadow: 0 0 20px #666;
-}
-
-/* Pulse animation for critical planet */
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.05); opacity: 0.8; box-shadow: 0 0 70px #f44336; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* Add stars to background (use your existing star code) */
-#game::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    radial-gradient(1px 1px at 10px 20px, #fff, rgba(0,0,0,0)),
-    radial-gradient(1px 1px at 30px 70px, #fff, rgba(0,0,0,0)),
-    /* ... keep all your existing stars ... */;
-  background-repeat: repeat;
-  background-size: 200px 200px;
-  opacity: 0.7;
-  animation: twinkle 5s infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-
-@keyframes twinkle {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
-}
-/* Default planet (healthy blue) */
-#planet {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  transition: all 0.5s ease;
-  box-shadow: 0 0 30px rgba(0, 102, 255, 0.3);
-  background: radial-gradient(circle at 30% 30%, #0066ff, #000033);
-  position: relative;
-}
-
-/* Warning / unstable */
-#planet.warning {
-  background: radial-gradient(circle at 30% 30%, #ffc107, #b26500);
-  box-shadow: 0 0 40px #ffc107;
-}
-
-/* Critical / dying */
-#planet.critical {
-  background: radial-gradient(circle at 30% 30%, #f44336, #8b0000);
-  box-shadow: 0 0 50px #f44336;
-  animation: pulse 1s infinite;
-}
-
-/* Dead */
-#planet.dead {
-  background: radial-gradient(circle at 30% 30%, #666, #222);
-  box-shadow: 0 0 20px #666;
-}
-
-/* Universe health effects on stars */
-#game.universe-healthy::before {
-  opacity: 0.8;
-  filter: brightness(1);
-}
-
-#game.universe-warning::before {
-  opacity: 0.5;
-  filter: brightness(0.8) hue-rotate(90deg);
-  animation: starFlicker 2s infinite;
-}
-
-#game.universe-critical::before {
-  opacity: 0.3;
-  filter: brightness(0.5) hue-rotate(180deg);
-  animation: starFlicker 0.5s infinite;
-}
-
-#game.universe-dead::before {
-  opacity: 0.1;
-  filter: brightness(0.2);
-  animation: none;
-}
-
-@keyframes starFlicker {
-  0% { opacity: 0.5; }
-  50% { opacity: 0.2; }
-  100% { opacity: 0.5; }
-}
-
-/* Universe health effects on the void overlay */
-#game.universe-warning #planet::after {
-  border-color: rgba(255, 200, 0, 0.3);
-}
-
-#game.universe-critical #planet::after {
-  border-color: rgba(255, 0, 0, 0.5);
-  animation: ringPulse 1s infinite;
-}
-
-@keyframes ringPulse {
-  0% { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(15deg) scale(1); opacity: 0.3; }
-  50% { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(15deg) scale(1.2); opacity: 0.6; }
-  100% { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(15deg) scale(1); opacity: 0.3; }
-}
-
-/* Reality stability effects */
-#game.reality-mild #output div {
-  animation: subtleGlitch 8s infinite;
-  color: #d4af37;
-}
-
-#game.reality-moderate #output div {
-  animation: textFlicker 3s infinite;
-  color: #ff6b6b;
-  mix-blend-mode: difference;
-}
-
-#game.reality-moderate button {
-  transform: rotate(0.3deg);
-  transition: all 0.1s;
-}
-
-#game.reality-moderate button:hover {
-  transform: rotate(-0.3deg) scale(1.02);
-}
-
-#game.reality-severe {
-  animation: screenShake 0.3s infinite;
-}
-
-#game.reality-severe #output div {
-  animation: severeGlitch 0.8s infinite;
-  opacity: 0.8;
-  filter: blur(0.5px);
-  color: #ff00ff;
-}
-
-#game.reality-severe button {
-  pointer-events: auto; /* Keep clickable but weird */
-  opacity: 0.8;
-  transform: skew(1deg, 0.5deg);
-  border-color: #ff00ff;
-}
-
-#game.reality-severe button:hover {
-  transform: skew(-1deg, -0.5deg) scale(1.02);
-  background: #ff00ff;
-  color: black;
-}
-
-@keyframes subtleGlitch {
-  0% { transform: translate(0); }
-  1% { transform: translate(-1px, 1px); }
-  2% { transform: translate(1px, -1px); }
-  3% { transform: translate(0); }
-  100% { transform: translate(0); }
-}
-
-@keyframes textFlicker {
-  0% { opacity: 1; }
-  2% { opacity: 0.5; color: #ff0000; }
-  4% { opacity: 1; color: #00ff00; }
-  6% { opacity: 0.8; color: #0000ff; }
-  8% { opacity: 1; color: #ff00ff; }
-  10% { opacity: 1; color: #ADD8E6; }
-}
-
-@keyframes screenShake {
-  0% { transform: translate(0, 0); }
-  20% { transform: translate(2px, 1px); }
-  40% { transform: translate(-1px, -2px); }
-  60% { transform: translate(2px, -1px); }
-  80% { transform: translate(-2px, 1px); }
-  100% { transform: translate(0, 0); }
-}
-
-@keyframes severeGlitch {
-  0% { transform: translate(0); filter: hue-rotate(0); }
-  10% { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
-  20% { transform: translate(2px, -1px); filter: hue-rotate(180deg); }
-  30% { transform: translate(-1px, 2px); filter: hue-rotate(270deg); }
-  40% { transform: translate(0); filter: hue-rotate(360deg); }
-  100% { transform: translate(0); }
-}
-/* Universe health effects on the planet */
-#game.universe-warning #planet {
-  opacity: 0.8;
-  filter: brightness(0.8) saturate(0.7);
-  box-shadow: 0 0 30px rgba(255, 200, 0, 0.3);
-  transition: all 1s ease;
-}
-
-#game.universe-critical #planet {
-  opacity: 0.4;
-  filter: brightness(0.4) saturate(0.3);
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
-  transform: scale(0.8);
-  transition: all 1s ease;
-}
-
-#game.universe-dead #planet {
-  opacity: 0;
-  transform: scale(0);
-  box-shadow: none;
-  transition: all 2s ease;
-}
-
-/* Also fade the moon and ring */
-#game.universe-critical #planet::before,
-#game.universe-critical #planet::after {
-  opacity: 0.3;
-}
-
-#game.universe-dead #planet::before,
-#game.universe-dead #planet::after {
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-/* Add to your CSS - Void Dimming Effects */
-
-/* Base dimming effect that scales with void attention */
-#game.void-dim {
-  transition: filter 0.5s ease;
-}
-
-/* Low void (0-30) - Normal */
-#game.void-low {
-  filter: brightness(1);
-}
-
-/* Medium void (31-60) - Slightly dim */
-#game.void-medium {
-  filter: brightness(0.85) contrast(0.95);
-}
-
-/* High void (61-80) - Noticeably dim */
-#game.void-high {
-  filter: brightness(0.7) contrast(0.9);
-  transition: filter 1s ease;
-}
-
-/* Critical void (81-100) - Very dim, controls fading */
-#game.void-critical {
-  filter: brightness(0.5) contrast(0.8) grayscale(0.2);
-  transition: filter 1.5s ease;
-}
-
-/* Fade out controls at critical void */
-#game.void-critical #sidebar button,
-#game.void-critical #terminal button,
-#game.void-critical .choice-btn {
-  opacity: 0.6;
-  transition: opacity 1s ease;
-}
-
-#game.void-critical #sidebar button:hover {
-  opacity: 0.9;
-}
-
-/* Almost invisible at max void */
-#game.void-max {
-  filter: brightness(0.3) contrast(0.7) grayscale(0.4);
-}
-
-#game.void-max #sidebar button,
-#game.void-max #terminal button,
-#game.void-max .choice-btn {
-  opacity: 0.3;
-}
-
-#game.void-max #sidebar button:hover {
-  opacity: 0.6;
-}
-
-/* Void overlay that gets darker */
-#game.void-dim::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%);
-  pointer-events: none;
-  z-index: 3;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-#game.void-medium::before {
-  opacity: 0.2;
-}
-
-#game.void-high::before {
-  opacity: 0.4;
-}
-
-#game.void-critical::before {
-  opacity: 0.6;
-}
-
-#game.void-max::before {
-  opacity: 0.8;
-}
-/* Void effects on planet */
-#game.void-critical #planet {
-  opacity: 0.5;
-  filter: brightness(0.3) saturate(0.2);
-  transform: scale(0.6);
-  transition: all 1.5s ease;
-  box-shadow: none;
-}
-
-#game.void-max #planet {
-  opacity: 0;
-  transform: scale(0);
-  transition: all 2s ease;
-}
-
-/* Also fade the moon and ring */
-#game.void-critical #planet::before,
-#game.void-critical #planet::after {
-  opacity: 0.2;
-  transition: all 1s ease;
-}
-
-#game.void-max #planet::before,
-#game.void-max #planet::after {
-  opacity: 0;
-  transform: scale(0);
-}
-
-/* ===== VOID EFFECTS ===== */
-/* Void feels like darkness consuming everything */
-
-/* Medium void (30-60%) - Shadows grow */
-#game.void-medium {
-  filter: brightness(0.9) contrast(0.95);
-}
-
-#game.void-medium #output {
-  text-shadow: 0 0 2px #8a2be2;
-}
-
-/* High void (60-80%) - Screen darkens, edges blur */
-#game.void-high {
-  filter: brightness(0.75) contrast(0.9) blur(0.5px);
-}
-
-#game.void-high #output {
-  text-shadow: 0 0 3px #8a2be2;
-  letter-spacing: 0.5px;
-}
-
-/* Critical void (80-95%) - Heavy darkness, text fragments */
-#game.void-critical {
-  filter: brightness(0.5) contrast(0.8) blur(1px);
-}
-
-#game.void-critical #output div {
-  animation: voidFlicker 2s infinite;
-  letter-spacing: 1px;
-}
-
-@keyframes voidFlicker {
-  0% { opacity: 0.9; text-shadow: 0 0 2px #8a2be2; }
-  50% { opacity: 0.6; text-shadow: 0 0 5px #8a2be2; letter-spacing: 2px; }
-  100% { opacity: 0.9; text-shadow: 0 0 2px #8a2be2; }
-}
-
-/* Maximum void (95-100%) - Almost unreadable, static overlay */
-#game.void-max {
-  filter: brightness(0.3) contrast(0.7) blur(2px);
-}
-
-#game.void-max #output div {
-  animation: voidStatic 0.3s infinite;
-  opacity: 0.5;
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
 }
-
-@keyframes voidStatic {
-  0% { opacity: 0.4; text-shadow: 0 0 5px #ff00ff; }
-  100% { opacity: 0.6; text-shadow: 0 0 2px #8a2be2; }
-}
-
-/* ===== UNIVERSE EFFECTS ===== */
-/* Universe feels like cosmic decay - stars dying, emptiness */
-
-/* Universe warning - stars dim */
-#game.universe-warning {
-  filter: brightness(0.9) sepia(0.1);
-}
-
-#game.universe-warning #game::before {
-  opacity: 0.4;
-  animation: starFlicker 3s infinite;
-}
-
-/* Universe critical - stars almost gone, cold feeling */
-#game.universe-critical {
-  filter: brightness(0.7) sepia(0.2) hue-rotate(180deg);
-}
-
-#game.universe-critical #game::before {
-  opacity: 0.2;
-  animation: starFade 2s infinite;
-}
-
-@keyframes starFade {
-  0% { opacity: 0.2; }
-  50% { opacity: 0.05; }
-  100% { opacity: 0.2; }
-}
-
-/* Universe dead - cold void, no stars */
-#game.universe-dead {
-  filter: brightness(0.4) grayscale(0.8) hue-rotate(270deg);
-}
-
-#game.universe-dead #game::before {
-  opacity: 0;
-}
-
-/* ===== COMBINED EFFECTS ===== */
-/* When both are bad, everything fades */
-#game.void-critical.universe-critical {
-  filter: brightness(0.4) grayscale(0.5) blur(1px);
-  animation: collapse 3s infinite;
-}
-
-@keyframes collapse {
-  0% { filter: brightness(0.4) grayscale(0.5); }
-  50% { filter: brightness(0.3) grayscale(0.7) blur(2px); }
-  100% { filter: brightness(0.4) grayscale(0.5); }
+::-webkit-scrollbar-thumb {
+  background: green;
 }

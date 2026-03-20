@@ -292,36 +292,45 @@ function updateStatsPanel() {
   }
   
   // Update universe visual effects
-  const gameEl = document.getElementById("game");
-  if (gameEl) {
-    gameEl.classList.remove("universe-warning", "universe-critical", "universe-dead");
-    
-    if (gameState.universeHealth <= 0) {
-      gameEl.classList.add("universe-dead");
-    } else if (gameState.universeHealth < 20) {
-      gameEl.classList.add("universe-critical");
-    } else if (gameState.universeHealth < 50) {
-      gameEl.classList.add("universe-warning");
-    }
-  }
+const gameEl = document.getElementById("game");
+if (gameEl) {
+  // Remove ALL universe classes first
+  gameEl.classList.remove("universe-healthy", "universe-mild", "universe-warning", "universe-critical", "universe-severe", "universe-dead");
   
- if (gameEl) {
+// In updateStatsPanel() - WIDE thresholds
+if (gameState.universeHealth <= 0) {
+  gameEl.classList.add("universe-dead");
+} else if (gameState.universeHealth < 20) {
+  gameEl.classList.add("universe-severe");
+} else if (gameState.universeHealth < 40) {
+  gameEl.classList.add("universe-critical");
+} else if (gameState.universeHealth < 60) {
+  gameEl.classList.add("universe-warning");
+} else if (gameState.universeHealth < 80) {
+  gameEl.classList.add("universe-mild");
+} else {
+  gameEl.classList.add("universe-healthy");
+}
+  
+  // Remove ALL void classes first
   gameEl.classList.remove("void-low", "void-medium", "void-high", "void-critical", "void-max", "void-dim");
   
+  // Void dimming effects - GRADUAL
   if (gameState.voidAttention > 90) {
     gameEl.classList.add("void-max", "void-dim");
-  } else if (gameState.voidAttention > 80) {
+  } else if (gameState.voidAttention > 75) {
     gameEl.classList.add("void-critical", "void-dim");
-  } else if (gameState.voidAttention > 60) {
+  } else if (gameState.voidAttention > 55) {
     gameEl.classList.add("void-high", "void-dim");
-  } else if (gameState.voidAttention > 30) {
+  } else if (gameState.voidAttention > 25) {
     gameEl.classList.add("void-medium", "void-dim");
   } else if (gameState.voidAttention > 0) {
     gameEl.classList.add("void-low", "void-dim");
   }
 }
-  // Update reality effects
-  updateRealityEffects();
+
+// Update reality effects
+updateRealityEffects();
 }
 // --- CAPS ---
 function clampStats() {
