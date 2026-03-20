@@ -28,6 +28,11 @@ let gameState = {
   deepMeditationEndTime: 0
 };
 
+// --- HELPER FUNCTIONS ---
+function getNetKarma() {
+  return gameState.blessings - gameState.curses;
+}
+
 // --- FAINT SYSTEM ---
 let faintActive = false;
 let voidTimerCountdown = null;
@@ -402,6 +407,10 @@ function createStatsPanel() {
       <div class="stat-value" id="stat-curses">0</div>
     </div>
     <div class="stat-row">
+      <div class="stat-label">KARMA</div>
+      <div class="stat-value" id="stat-karma">0</div>
+    </div>
+    <div class="stat-row">
       <div class="stat-label">CYCLE</div>
       <div class="stat-value" id="stat-cycle">50%</div>
       <div class="stat-bar"><div class="stat-fill" id="bar-cycle" style="width:50%; background:#87CEEB;"></div></div>
@@ -461,12 +470,10 @@ function getCyclePhase() {
 }
 
 // Reality Chaos Effects
-// Reality Chaos Effects
 function updateRealityChaos() {
   const gameEl = document.getElementById("game");
   if (!gameEl) return;
   
-  // REMOVE ALL chaos classes first (this is the key fix)
   gameEl.classList.remove(
     "reality-chaos-mild", 
     "reality-chaos-moderate", 
@@ -474,9 +481,7 @@ function updateRealityChaos() {
     "reality-chaos-extreme"
   );
   
-  // Only add chaos if reality is below 60%
   if (gameState.realityStability < 60 && !gameState.hasEnding) {
-    // Progressive chaos based on how low reality is
     if (gameState.realityStability < 10) {
       gameEl.classList.add("reality-chaos-extreme");
     } else if (gameState.realityStability < 20) {
@@ -487,7 +492,6 @@ function updateRealityChaos() {
       gameEl.classList.add("reality-chaos-mild");
     }
     
-    // Random chaos messages (only below 30% for better pacing)
     if (gameState.realityStability < 30 && Math.random() < 0.03 && !gameState.hasEnding) {
       const chaosMessages = [
         "The screen flickers...",
@@ -506,18 +510,14 @@ function updateRealityChaos() {
       addMessage(getRandom(chaosMessages), "machine");
     }
   }
-  // If reality is >= 60, we already removed all chaos classes above
 }
 
-// Update reality visual effects
-// Update reality visual effects
 function updateRealityEffects() {
   const gameEl = document.getElementById("game");
   if (!gameEl) return;
   
   gameEl.classList.remove("reality-mild", "reality-moderate", "reality-severe");
   
-  // Update chaos effects based on current reality
   updateRealityChaos();
   
   if (gameState.realityStability < 30) {
@@ -547,6 +547,7 @@ function updateStatsPanel() {
   const statReality = document.getElementById("stat-reality");
   const statBlessings = document.getElementById("stat-blessings");
   const statCurses = document.getElementById("stat-curses");
+  const statKarma = document.getElementById("stat-karma");
   const statCycle = document.getElementById("stat-cycle");
   const statPhase = document.getElementById("stat-phase");
 
@@ -554,6 +555,7 @@ function updateStatsPanel() {
 
   const previousPhase = gameState.currentPhase;
   const currentPhase = getCyclePhase();
+  const netKarma = getNetKarma();
   
   if (statKnowledge) statKnowledge.textContent = gameState.knowledge.toFixed(1);
   if (statPlanet) statPlanet.textContent = `${Math.floor(gameState.planetHealth)}%`;
@@ -563,6 +565,7 @@ function updateStatsPanel() {
   if (statReality) statReality.textContent = `${Math.floor(gameState.realityStability)}%`;
   if (statBlessings) statBlessings.textContent = gameState.blessings;
   if (statCurses) statCurses.textContent = gameState.curses;
+  if (statKarma) statKarma.textContent = netKarma;
   if (statCycle) statCycle.textContent = `${Math.floor(gameState.cosmicCycle)}%`;
   if (statPhase) statPhase.textContent = currentPhase;
   
@@ -699,8 +702,10 @@ function isWordDead(word) {
 
 function getWordPower(word) {
   const usage = gameState.wordUsage[word] || 0;
-  const blessingBonus = gameState.blessings * 0.03;
-  const cursePenalty = gameState.curses * 0.03;
+  const netKarma = getNetKarma();
+  
+  // Karma bonus/penalty (capped between -0.6 and +0.6)
+  const karmaBonus = Math.max(-0.6, Math.min(0.6, netKarma * 0.03));
   
   let basePower = 1.0;
   if (usage <= 3) basePower = 1.0;
@@ -708,7 +713,7 @@ function getWordPower(word) {
   else if (usage <= 9) basePower = 0.5;
   else basePower = 0.2;
   
-  return Math.max(0.1, Math.min(1.5, basePower + blessingBonus - cursePenalty));
+  return Math.max(0.1, Math.min(1.5, basePower + karmaBonus));
 }
 
 // Speak a word
@@ -719,7 +724,8 @@ function speakWord(word) {
   gameState.wordUsage[word] = (gameState.wordUsage[word] || 0) + 1;
 
   const wordPower = getWordPower(word);
-  const misfireChance = Math.max(0, (gameState.strain > 60 ? 0.4 : 0) - (gameState.blessings * 0.02));
+  const netKarma = getNetKarma();
+  const misfireChance = Math.max(0, (gameState.strain > 60 ? 0.4 : 0) - (Math.max(0, netKarma) * 0.02));
   
   gameState.universeHealth = Math.max(0, gameState.universeHealth - (0.2 * wordPower));
   gameState.voidAttention = Math.min(100, gameState.voidAttention + (0.5 * wordPower));
@@ -838,7 +844,8 @@ function speakWord(word) {
           strainPenalty = (gameState.strain - 30) * 0.004;
         }
         
-        let blessingBonus = gameState.blessings * 0.01;
+        const netKarma = getNetKarma();
+        let karmaBonus = Math.max(0, netKarma) * 0.01;
         let knowledgeBonus = gameState.knowledge * 0.002;
         
         let discoveryPenalty = 1.0;
@@ -851,7 +858,7 @@ function speakWord(word) {
           }
         }
         
-        const chance = Math.max(0.05, Math.min(0.6, baseChance - strainPenalty + knowledgeBonus + blessingBonus)) * discoveryPenalty;
+        const chance = Math.max(0.05, Math.min(0.6, baseChance - strainPenalty + knowledgeBonus + karmaBonus)) * discoveryPenalty;
 
         if (Math.random() < chance) {
           const event = eventPool[Math.floor(Math.random() * eventPool.length)];
@@ -903,14 +910,21 @@ function advanceTime() {
   gameState.cycles++;
   
   const oldVoid = gameState.voidAttention;
+  const netKarma = getNetKarma();
+  
+  // Base void increase
   gameState.voidAttention = Math.min(100, gameState.voidAttention + 0.8);
   
-  if (gameState.blessings > 0 && gameState.cycles % 5 === 0) {
-    gameState.voidAttention = Math.max(0, gameState.voidAttention - gameState.blessings * 0.3);
+  // Net karma effect on void
+  if (netKarma !== 0) {
+    const karmaVoidEffect = netKarma * 0.2;
+    gameState.voidAttention = Math.min(100, Math.max(0, gameState.voidAttention - karmaVoidEffect));
   }
   
-  if (gameState.curses > 0) {
-    gameState.voidAttention = Math.min(100, gameState.voidAttention + gameState.curses * 0.2);
+  // Every 5 cycles, karma affects void more strongly
+  if (gameState.cycles % 5 === 0 && netKarma !== 0) {
+    const cycleEffect = netKarma * 0.3;
+    gameState.voidAttention = Math.min(100, Math.max(0, gameState.voidAttention - cycleEffect));
   }
   
   if (Math.abs(oldVoid - gameState.voidAttention) > 0.5) {
@@ -940,7 +954,8 @@ function receiveTransmission() {
   addMessage(`TRANSMISSION RECEIVED: "${gibberish}" from Sector ${sector}`, "machine");
   addMessage(transmission, "machine");
   
-  const discoverChance = 0.1 + (gameState.blessings * 0.02);
+  const netKarma = getNetKarma();
+  const discoverChance = 0.1 + (Math.max(0, netKarma) * 0.02);
   
   if (Math.random() < discoverChance && !gameState.dictionary[gibberish]) {
     const event = eventPool[Math.floor(Math.random() * eventPool.length)];
@@ -968,10 +983,17 @@ function generateGibberish() {
 // --- STRAIN & SLEEP ---
 function applyStrain() {
   const oldStrain = gameState.strain;
+  const netKarma = getNetKarma();
+  
   gameState.strain = Math.min(100, gameState.strain + 2);
   
-  if (gameState.blessings > 0 && Math.random() < 0.1) {
-    gameState.strain = Math.max(0, gameState.strain - gameState.blessings);
+  // Net karma effect on strain
+  if (netKarma > 0 && Math.random() < 0.1) {
+    const strainReduction = Math.min(20, netKarma);
+    gameState.strain = Math.max(0, gameState.strain - strainReduction);
+  } else if (netKarma < 0 && Math.random() < 0.1) {
+    const strainIncrease = Math.min(20, Math.abs(netKarma));
+    gameState.strain = Math.min(100, gameState.strain + strainIncrease);
   }
   
   if (Math.abs(oldStrain - gameState.strain) > 0.5) {
@@ -1066,7 +1088,7 @@ function sleep() {
   addMessage("I should rest for a bit.", "player");
 
   setTimeout(() => {
-    const sleepMisfire = Math.random() < (0.3 - (gameState.blessings * 0.015)) / effectiveness;
+    const sleepMisfire = Math.random() < (0.3 - (Math.max(0, getNetKarma()) * 0.015)) / effectiveness;
     
     if (sleepMisfire) {
       addMessage("My sleep was restless...", "player");
@@ -1170,11 +1192,15 @@ function pray() {
     const oldReality = gameState.realityStability;
     
     const alignment = getCosmicAlignment();
-    const prayerPower = Math.floor((3 + (gameState.blessings * 0.2)) * (0.8 + alignment * 0.4));
+    const netKarma = getNetKarma();
+    const prayerPower = Math.floor((3 + (Math.max(0, netKarma) * 0.2)) * (0.8 + alignment * 0.4));
     gameState.planetHealth = Math.min(100, gameState.planetHealth + prayerPower);
-    gameState.voidAttention = Math.max(0, gameState.voidAttention - 1 - gameState.blessings * 0.1);
+    gameState.voidAttention = Math.max(0, gameState.voidAttention - 1 - Math.max(0, netKarma) * 0.1);
 
-    if (Math.random() < (0.25 - (gameState.blessings * 0.01)) / alignment) {
+    // Failure chance decreases with positive karma
+    const failureChance = (0.25 - (Math.max(0, netKarma) * 0.02)) / alignment;
+    
+    if (Math.random() < failureChance) {
       addMessage("Something else heard you.", "machine");
       gameState.universeHealth = Math.max(0, gameState.universeHealth - 8);
       gameState.strain = Math.min(100, gameState.strain + 12);
@@ -1219,7 +1245,8 @@ function read() {
     const oldReality = gameState.realityStability;
     
     const alignment = getCosmicAlignment();
-    const knowledgeGain = (Math.max(1, 3 - Math.floor(gameState.strain / 30)) + (gameState.blessings * 0.2)) * (0.7 + alignment * 0.6);
+    const netKarma = getNetKarma();
+    const knowledgeGain = (Math.max(1, 3 - Math.floor(gameState.strain / 30)) + (Math.max(0, netKarma) * 0.2)) * (0.7 + alignment * 0.6);
     gameState.knowledge += knowledgeGain;
     
     const strainIncrease = Math.max(3, 6 - Math.floor(gameState.strain / 20));
@@ -1230,7 +1257,7 @@ function read() {
     addMessage("I understand a little more.", "player");
 
     const unknownWords = Object.keys(gameState.dictionary).filter(w => !gameState.dictionary[w].known);
-    const learnChance = Math.max(0.05, 0.25 - (gameState.strain / 200) + (gameState.blessings * 0.01));
+    const learnChance = Math.max(0.05, 0.25 - (gameState.strain / 200) + (Math.max(0, netKarma) * 0.01));
     
     if (unknownWords.length > 0 && Math.random() < learnChance) {
       const wordToLearn = unknownWords[Math.floor(Math.random() * unknownWords.length)];
@@ -1240,7 +1267,7 @@ function read() {
       gameState.blessings = Math.min(20, gameState.blessings + 1);
     }
 
-    const discoverChance = Math.max(0.05, 0.15 - (gameState.strain / 150) + (gameState.blessings * 0.01));
+    const discoverChance = Math.max(0.05, 0.15 - (gameState.strain / 150) + (Math.max(0, netKarma) * 0.01));
     
     if (Math.random() < discoverChance) {
       const syllables = ["ka", "ta", "na", "ma", "ra", "sa", "la", "va", "da", "ba", 
@@ -1287,7 +1314,8 @@ function rest() {
     const oldReality = gameState.realityStability;
     
     const alignment = getCosmicAlignment();
-    const restAmount = Math.floor((15 + (gameState.blessings * 1.5)) * (0.7 + alignment * 0.6));
+    const netKarma = getNetKarma();
+    const restAmount = Math.floor((15 + (Math.max(0, netKarma) * 1.5)) * (0.7 + alignment * 0.6));
     gameState.strain = Math.max(0, gameState.strain - restAmount);
     gameState.planetHealth = Math.min(100, gameState.planetHealth + 1);
     gameState.voidAttention = Math.max(0, gameState.voidAttention - 0.5);
@@ -1524,27 +1552,27 @@ function toggleDictionary() {
 function checkEndings() {
   if (gameState.hasEnding) return;
   
-  // Clear void timer if ending is about to trigger
   if (voidTimerCountdown) {
     clearTimeout(voidTimerCountdown);
     voidTimerCountdown = null;
   }
   
+  const netKarma = getNetKarma();
+  
   if (gameState.planetHealth >= 100 && 
       gameState.voidAttention <= 3 && 
-      gameState.blessings >= 15 && 
+      netKarma >= 10 && 
       gameState.knowledge >= 150 && 
       gameState.cycles >= 75 &&
       Object.keys(gameState.dictionary).length >= 25) {
     triggerEnding("good");
   }
   else if (gameState.voidAttention >= 100 && gameState.cycles >= 15) {
-    // This is now handled by the timer, but keep as fallback
     if (!voidTimerCountdown) {
       triggerEnding("void");
     }
   }
-  else if (gameState.curses >= 12 && gameState.strain >= 90 && gameState.cycles >= 25) {
+  else if (netKarma <= -12 && gameState.strain >= 90 && gameState.cycles >= 25) {
     triggerEnding("reality");
   }
   else if (gameState.cycles >= 150) {
@@ -1554,7 +1582,7 @@ function checkEndings() {
     triggerEnding("universe");
   }
   else if (Object.keys(gameState.dictionary).length >= 40 && 
-           gameState.blessings >= 12 && 
+           netKarma >= 8 && 
            gameState.knowledge >= 200 && 
            gameState.cycles >= 60) {
     triggerEnding("scholar");
@@ -1568,7 +1596,6 @@ function triggerEnding(type) {
   gameState.hasEnding = true;
   inputLocked = true;
   
-  // Clear void timer if it exists
   if (voidTimerCountdown) {
     clearTimeout(voidTimerCountdown);
     voidTimerCountdown = null;
@@ -1614,7 +1641,7 @@ function triggerEnding(type) {
     reality: [
       "Reality tears like wet paper.",
       "You see behind the curtain.",
-      "It's just code. Just text.",
+      "It's just words. Just text.",
       "You're typing to yourself.",
       "There is no planet. No universe.",
       "Just you and the void.",
@@ -1769,6 +1796,7 @@ function handleCommand(input) {
     return;
   }
   if (cmd === "/stats") {
+    const netKarma = getNetKarma();
     addMessage(`Knowledge: ${gameState.knowledge.toFixed(1)}`, "machine");
     addMessage(`Planet: ${Math.floor(gameState.planetHealth)}%`, "machine");
     addMessage(`Universe: ${Math.floor(gameState.universeHealth)}%`, "machine");
@@ -1779,6 +1807,7 @@ function handleCommand(input) {
     addMessage(`Cycles: ${gameState.cycles}`, "machine");
     addMessage(`Blessings: ${gameState.blessings}`, "machine");
     addMessage(`Curses: ${gameState.curses}`, "machine");
+    addMessage(`Karma: ${netKarma}`, "machine");
     addMessage(`Cycle: ${Math.floor(gameState.cosmicCycle)}%`, "machine");
     addMessage(`Phase: ${getCyclePhase()}`, "machine");
     return;
@@ -1901,7 +1930,6 @@ function startTimers() {
     const oldVoid = gameState.voidAttention;
     gameState.voidAttention = Math.min(100, gameState.voidAttention + 0.5);
     
-    // Check if void reached 100
     if (gameState.voidAttention >= 100 && !voidTimerCountdown && !gameState.hasEnding) {
       voidTimerCountdown = setTimeout(() => {
         if (gameState.voidAttention >= 100 && gameState.cycles >= 15) {
@@ -1912,7 +1940,6 @@ function startTimers() {
       addMessage("The void is at 100%! You have 3 seconds to act...", "machine");
     }
     
-    // Reset countdown if void drops below 100
     if (gameState.voidAttention < 100 && voidTimerCountdown) {
       clearTimeout(voidTimerCountdown);
       voidTimerCountdown = null;
@@ -2012,7 +2039,6 @@ function startTimers() {
 
 // --- KEYBOARD HANDLER ---
 function handleKeyPress(e) {
-  // ESC key for pause (code 27)
   if (e.key === 'Escape' || e.key === 'Esc') {
     e.preventDefault();
     togglePause();
@@ -2053,6 +2079,7 @@ function initGame() {
   addMessage("The void watches...", "machine");
   addMessage("The cosmic cycle affects sleep and meditation.", "machine");
   addMessage("Watch the PHASE indicator for current cycle effects.", "machine");
+  addMessage("Karma is the balance of blessings and curses.", "machine");
   addMessage("Press ESC to pause/resume the game.", "machine");
   addMessage("Commands: /stats, /sound, /clear, /quit (when paused)", "machine");
 
@@ -2140,6 +2167,7 @@ function initGame() {
       console.log("Reality:", gameState.realityStability);
       console.log("Blessings:", gameState.blessings);
       console.log("Curses:", gameState.curses);
+      console.log("Karma:", getNetKarma());
     }
   };
 }
