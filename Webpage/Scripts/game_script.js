@@ -913,8 +913,8 @@ function read() {
     const oldReality = gameState.realityStability;
     
     const alignment = getCosmicAlignment();
-    const knowledgeGain = Math.floor((Math.max(1, 3 - Math.floor(gameState.strain / 30)) + (gameState.blessings * 0.2)) * (0.7 + alignment * 0.6));
-    gameState.knowledge += Math.floor(knowledgeGain);
+    const knowledgeGain = (Math.max(1, 3 - Math.floor(gameState.strain / 30)) + (gameState.blessings * 0.2)) * (0.7 + alignment * 0.6);
+    gameState.knowledge += knowledgeGain;
     
     const strainIncrease = Math.max(3, 6 - Math.floor(gameState.strain / 20));
     gameState.strain = Math.min(100, gameState.strain + strainIncrease);
@@ -1455,7 +1455,7 @@ function handleCommand(input) {
     addMessage(`Cycle: ${Math.floor(gameState.cosmicCycle)}%`, "machine");
     addMessage(`Phase: ${getCyclePhase()}`, "machine");
     return;
-  }
+  }addMessage(`Knowledge: ${gameState.knowledge.toFixed(1)}`, "machine");
 
   speakWord(cmd);
 }
