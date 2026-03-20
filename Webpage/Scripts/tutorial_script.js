@@ -1,8 +1,8 @@
 // --- tutorial_script.js ---
 
 const tutorialText = `═══════════════════════════════════════
-         REALITY ARCHITECT MANUAL
-═══════════════════════════════════════
+ THE ARCHITECT - How to Play
+================================
 
 > TERMINAL
 The universe is a command line. Type words. 
@@ -21,6 +21,7 @@ Words have 10 uses. After that, they die.
 /deep     - Major void reduction. Costs 50 knowledge.
 /stats    - See all values.
 /clear    - Clear terminal.
+press p to pause and p again to resume. 
 
 > COSMIC CYCLE
 Watch the PHASE indicator:
@@ -33,7 +34,10 @@ NEUTRAL → Normal.
 Planet health, universe health, reality stability.
 Let any hit zero. The universe ends.
 
-Do not let Void influence increase 
+Do not let Void influence increase.
+
+If Strain is over 50, discovered words on the terminal will automatically trigger,
+keep your Strain low. If Strain is too high, you may be too stressed to meditate. 
 
 > WORDS
 Each word has 10 uses. After that, it crumbles to dust.
@@ -45,16 +49,7 @@ const tutorialOverlay = document.getElementById("tutorial");
 const tutorialOutput = document.getElementById("tutorial-output");
 const tutorialChoices = document.getElementById("tutorial-choices");
 
-let timeoutTimer = null;
 let tutorialActive = true;
-
-// Clear timeout
-function clearTutorialTimeout() {
-  if (timeoutTimer) {
-    clearTimeout(timeoutTimer);
-    timeoutTimer = null;
-  }
-}
 
 // Show choice buttons
 function showChoices(choices, callback) {
@@ -66,7 +61,6 @@ function showChoices(choices, callback) {
     btn.className = 'choice-btn';
     btn.textContent = choiceText;
     btn.onclick = () => {
-      clearTutorialTimeout();
       tutorialChoices.style.display = 'none';
       tutorialChoices.innerHTML = '';
       callback(choiceText);
@@ -98,91 +92,50 @@ function startTutorial() {
     el.classList.remove('highlight');
   });
   
-  // Greeting and question
+  // Greeting
   addMachineMessage("Welcome, apprentice.");
   
   setTimeout(() => {
     addMachineMessage("Do you need a refresher on what to do?");
     
-    setTimeout(() => {
-      // Show initial choice
-      showChoices(["I got this", "Sure, tell me"], (choice) => {
-        if (choice === "I got this") {
-          addMachineMessage("Then begin.");
-          setTimeout(() => endTutorial(), 1500);
-        } else {
-          // Send the files
-          addMachineMessage("I'll send you the files. Read them.");
-          
-          setTimeout(() => {
-            // Display the manual
-            const pre = document.createElement('pre');
-            pre.style.color = 'lightblue';
-            pre.style.fontSize = '1em';
-            pre.style.lineHeight = '1.4em';
-            pre.style.margin = '10px 0';
-            pre.style.padding = '10px';
-            pre.style.whiteSpace = 'pre-wrap';
-            pre.style.fontFamily = 'monospace';
-            pre.style.borderTop = '1px solid lightblue';
-            pre.style.borderBottom = '1px solid lightblue';
-            pre.textContent = tutorialText;
-            tutorialOutput.appendChild(pre);
-            tutorialOutput.scrollTop = tutorialOutput.scrollHeight;
-            
-            // After manual, ask if they're good
-            setTimeout(() => {
-              addMachineMessage("Read it?");
-              
-              setTimeout(() => {
-                showChoices(["I'm good", "I don't need to"], (followUp) => {
-                  if (followUp === "I'm good") {
-                    addMachineMessage("Good. My purpose is to translate divine signals.");
-                    addMachineMessage("Don't break everything.");
-                    setTimeout(() => endTutorial(), 2000);
-                  } else {
-                    addMachineMessage("You sure?");
-                    setTimeout(() => {
-                      addMachineMessage("Fine. Good luck. You'll need it.");
-                      setTimeout(() => endTutorial(), 2000);
-                    }, 1000);
-                  }
-                });
-                
-                // 15 second timeout for follow-up choice
-                timeoutTimer = setTimeout(() => {
-                  tutorialChoices.style.display = 'none';
-                  addMachineMessage("...");
-                  setTimeout(() => {
-                    addMachineMessage("Fine. Good luck.");
-                    setTimeout(() => endTutorial(), 1500);
-                  }, 1000);
-                }, 15000);
-                
-              }, 500);
-            }, 800);
-          }, 800);
-        }
-      });
-      
-      // 10 second timeout for initial choice
-      timeoutTimer = setTimeout(() => {
-        tutorialChoices.style.display = 'none';
-        addMachineMessage("...");
-        setTimeout(() => {
-          addMachineMessage("Fine. Good luck.");
-          setTimeout(() => endTutorial(), 1500);
-        }, 1000);
-      }, 10000);
-      
-    }, 500);
+    showChoices(["I got this", "Sure, tell me"], (choice) => {
+      if (choice === "I got this") {
+        addMachineMessage("Then begin.");
+        setTimeout(() => endTutorial(), 1500);
+      } else {
+        addMachineMessage("I'll send you the files. Read them.");
+        
+        // Display the manual
+        const pre = document.createElement('pre');
+        pre.style.color = 'lightblue';
+        pre.style.fontSize = '1em';
+        pre.style.lineHeight = '1.4em';
+        pre.style.margin = '10px 0';
+        pre.style.padding = '10px';
+        pre.style.whiteSpace = 'pre-wrap';
+        pre.style.fontFamily = 'monospace';
+        pre.style.borderTop = '1px solid lightblue';
+        pre.style.borderBottom = '1px solid lightblue';
+        pre.textContent = tutorialText;
+        tutorialOutput.appendChild(pre);
+        tutorialOutput.scrollTop = tutorialOutput.scrollHeight;
+        
+        // Ask if they're ready
+        addMachineMessage("Ready to begin?");
+        
+        showChoices(["Begin"], () => {
+          addMachineMessage("Good. My purpose is to translate divine signals.");
+          addMachineMessage("Don't break everything.");
+          setTimeout(() => endTutorial(), 2000);
+        });
+      }
+    });
   }, 500);
 }
 
 // End tutorial
 function endTutorial() {
   tutorialActive = false;
-  clearTutorialTimeout();
   tutorialOverlay.style.display = 'none';
   tutorialChoices.style.display = 'none';
   tutorialChoices.innerHTML = '';

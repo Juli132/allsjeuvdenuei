@@ -18,6 +18,7 @@ Words have 10 uses. After that, they die.
 /deep     - Major void reduction. Costs 50 knowledge.
 /stats    - See all values.
 /clear    - Clear terminal.
+press p to pause and p again to resume. 
 
 > COSMIC CYCLE
 Watch the PHASE indicator:
@@ -30,11 +31,16 @@ NEUTRAL → Normal.
 Planet health, universe health, reality stability.
 Let any hit zero. The universe ends.
 
-Do not let Void influence increase 
+Do not let Void influence increase.
+
+If Strain is over 50, discovered words on the terminal will automatically trigger,
+keep your Strain low. If Strain is too high, you may be too stressed to meditate. 
 
 > WORDS
 Each word has 10 uses. After that, it crumbles to dust.
 Use them wisely. Discover new ones by typing anything.
+
+
 
 ═══════════════════════════════════════
 
