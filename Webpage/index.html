@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Universe Terminal</title>
+  <link rel="stylesheet" href="Styles/index.css">
+</head>
+<body>
+  <!-- Intro overlay -->
+  <div id="intro">
+    <div id="intro-text"></div>
+  </div>
+<!-- Tutorial overlay -->
+<div id="tutorial" style="display:none;">
+  <div id="tutorial-output"></div>
+  <div id="tutorial-choices" style="display:none;">
+    <button class="choice-btn">I got this</button>
+    <button class="choice-btn">Sure, tell me</button>
+  </div>
+</div>
+  <!-- Main game screen -->
+  <div id="game" style="display:none;">
+    <div id="background">
+      <div id="planet"></div>
+    </div>
+
+    <div id="output"></div>
+
+  <div id="sidebar">
+  <button id="learn-btn">Learn</button>
+  <button id="pray-btn">Pray</button>
+  <button id="sleep-btn">Sleep</button>
+  <button id="meditate-btn">Meditate</button>
+  <button id="deep-meditate-btn">Deep Meditate (50)</button>
+  <button id="dict-btn">Dictionary</button>
+</div>
+<div id="dictionary-panel" style="display:none;">
+  <div id="dictionary-content"></div>
+</div>
+   <div id="terminal">
+  <input type="text" id="player-input" placeholder="Type your command here..." autocomplete="off">
+  <button id="submit-btn">Execute</button>
+</div>
+
+  <script src="Scripts/index_script.js"></script>
+    <script src="Scripts/tutorial_script.js"></script>
+<script type="module" src="Scripts/game_script.js"></script>
+</body>
+</html>
