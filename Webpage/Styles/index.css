@@ -1001,3 +1001,651 @@ body {
 #faint-overlay {
   z-index: 1000;
 }
+/* Progressive Reality Chaos Effects with SVG filters */
+
+/* Mild Chaos (30-60% reality) */
+#game.reality-chaos-mild {
+  animation: subtle-glitch 2s infinite;
+}
+
+/* Moderate Chaos (20-30% reality) */
+#game.reality-chaos-moderate {
+  animation: moderate-glitch 0.5s infinite;
+  filter: hue-rotate(15deg);
+  text-shadow: 1px 0 rgba(255,0,0,0.3), -1px 0 rgba(0,0,255,0.3);
+}
+
+/* Severe Chaos (10-20% reality) */
+#game.reality-chaos-severe {
+  animation: severe-glitch 0.2s infinite;
+  filter: url(#liquid-filter);
+  text-shadow: 2px 0 red, -2px 0 blue, 0 2px green, 0 -2px yellow;
+  position: relative;
+}
+
+/* Extreme Chaos (0-10% reality) - multiple filters combined */
+#game.reality-chaos-extreme {
+  animation: extreme-glitch 0.08s infinite;
+  filter: url(#warp-filter);
+  text-shadow: 3px 0 red, -3px 0 blue, 0 3px green, 0 -3px yellow;
+  transform-style: preserve-3d;
+}
+
+/* Additional effects for extreme chaos - output text distortion */
+#game.reality-chaos-extreme #output {
+  filter: url(#chromatic-filter);
+  letter-spacing: 2px;
+  word-spacing: 5px;
+}
+
+#game.reality-chaos-extreme #output div {
+  animation: text-wave 0.2s infinite;
+  display: inline-block;
+}
+
+@keyframes text-wave {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(1px, -1px); }
+  50% { transform: translate(-1px, 1px); }
+  75% { transform: translate(1px, 1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Combine filters for ultra extreme (below 5% reality) */
+#game.reality-chaos-extreme .stat-value {
+  filter: url(#chromatic-filter);
+  animation: color-pulse 0.1s infinite;
+}
+
+@keyframes color-pulse {
+  0% { text-shadow: 3px 0 red, -3px 0 blue; }
+  50% { text-shadow: -3px 0 red, 3px 0 blue; }
+  100% { text-shadow: 3px 0 red, -3px 0 blue; }
+}
+
+/* Optional: Add wobble to terminal */
+#game.reality-chaos-severe #terminal,
+#game.reality-chaos-extreme #terminal {
+  animation: terminal-wobble 0.2s infinite;
+  transform-origin: center;
+}
+
+@keyframes terminal-wobble {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(0.5deg) scale(1.01); }
+  75% { transform: rotate(-0.5deg) scale(0.99); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+/* Glow effect for chaos */
+#game.reality-chaos-extreme {
+  box-shadow: 0 0 20px rgba(255,0,0,0.3), inset 0 0 20px rgba(0,0,255,0.3);
+  animation: chaos-glow 0.2s infinite;
+}
+
+@keyframes chaos-glow {
+  0% { box-shadow: 0 0 20px rgba(255,0,0,0.3), inset 0 0 20px rgba(0,0,255,0.3); }
+  50% { box-shadow: 0 0 30px rgba(255,0,0,0.5), inset 0 0 30px rgba(0,0,255,0.5); }
+  100% { box-shadow: 0 0 20px rgba(255,0,0,0.3), inset 0 0 20px rgba(0,0,255,0.3); }
+}
+
+/* ==================== PLANET & MOON ==================== */
+/* Planet base */
+#planet {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  transition: all 0.5s ease;
+  background: radial-gradient(circle at 30% 30%, #0066ff, #000033);
+  box-shadow: 0 0 30px rgba(0, 102, 255, 0.3);
+  position: relative;
+  animation: pixel-rotation 20s infinite steps(8);
+}
+
+/* Moon - simple circular orbit */
+#planet::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: #c0c0c0;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 255, 200, 0.5);
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  animation: moon-orbit 12s linear infinite;
+}
+
+/* Ring */
+#planet::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 180px;
+  height: 35px;
+  border: 2px solid rgba(180, 180, 160, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotateX(75deg) rotateZ(15deg);
+  box-shadow: 0 0 15px rgba(200, 180, 120, 0.2);
+  pointer-events: none;
+}
+
+/* Moon orbit - simple circle */
+@keyframes moon-orbit {
+  0% {
+    transform: rotate(0deg) translateX(100px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(100px) rotate(-360deg);
+  }
+}
+
+/* Planet rotation */
+@keyframes pixel-rotation {
+  0% {
+    background: radial-gradient(circle at 30% 30%, #0066ff, #000033);
+  }
+  12.5% {
+    background: radial-gradient(circle at 40% 30%, #2266ff, #001133);
+  }
+  25% {
+    background: radial-gradient(circle at 55% 35%, #4488ff, #002244);
+  }
+  37.5% {
+    background: radial-gradient(circle at 70% 40%, #2266ff, #001133);
+  }
+  50% {
+    background: radial-gradient(circle at 80% 45%, #0066ff, #000033);
+  }
+  62.5% {
+    background: radial-gradient(circle at 70% 40%, #2266ff, #001133);
+  }
+  75% {
+    background: radial-gradient(circle at 55% 35%, #4488ff, #002244);
+  }
+  87.5% {
+    background: radial-gradient(circle at 40% 30%, #2266ff, #001133);
+  }
+  100% {
+    background: radial-gradient(circle at 30% 30%, #0066ff, #000033);
+  }
+}
+
+/* Planet Health States */
+#planet.warning {
+  animation: pixel-rotation 15s infinite steps(8);
+  background: radial-gradient(circle at 30% 30%, #ffc107, #b26500);
+  box-shadow: 0 0 40px #ffc107;
+}
+
+#planet.critical {
+  animation: pixel-rotation 10s infinite steps(6), pulse 1s infinite;
+  background: radial-gradient(circle at 30% 30%, #f44336, #8b0000);
+  box-shadow: 0 0 50px #f44336;
+}
+
+#planet.dead {
+  animation: none;
+  background: radial-gradient(circle at 30% 30%, #666, #222);
+  box-shadow: 0 0 20px #666;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; box-shadow: 0 0 70px #f44336; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ==================== ATMOSPHERIC EFFECTS ==================== */
+
+/* Distant Nebula Glow - Subtle background color shifts */
+@keyframes nebula-pulse {
+  0% { background-color: rgba(10, 5, 20, 0); }
+  50% { background-color: rgba(30, 10, 40, 0.1); }
+  100% { background-color: rgba(10, 5, 20, 0); }
+}
+
+#game::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  animation: nebula-pulse 30s ease-in-out infinite;
+}
+
+/* Cosmic Dust Particles - Always present, drifting slowly */
+.cosmic-dust {
+  position: absolute;
+  background: rgba(255, 255, 200, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: cosmic-drift 60s linear infinite;
+  opacity: 0;
+}
+
+@keyframes cosmic-drift {
+  0% {
+    transform: translateX(-10%) translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.2;
+  }
+  90% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(110%) translateY(20px);
+    opacity: 0;
+  }
+}
+
+/* Slow Drifting Fog - Creates depth perception */
+.drifting-fog {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, rgba(0, 20, 40, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+  animation: fog-drift 120s linear infinite;
+  z-index: 0;
+}
+
+@keyframes fog-drift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Faint Star Twinkling - Individual stars pulse */
+@keyframes twinkle {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+/* Add twinkling to existing stars */
+#game::before {
+  animation: starfield-twinkle 4s ease-in-out infinite;
+}
+
+@keyframes starfield-twinkle {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.95; }
+}
+
+/* Distant Planet Silhouette - Far background element */
+.distant-world {
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(100, 80, 60, 0.3), rgba(30, 20, 10, 0.1));
+  filter: blur(8px);
+  pointer-events: none;
+  animation: distant-haze 20s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes distant-haze {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.05); }
+}
+
+/* Second Distant Planet */
+.distant-world-2 {
+  position: absolute;
+  top: 15%;
+  left: 8%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, rgba(80, 100, 120, 0.25), rgba(20, 30, 40, 0.1));
+  filter: blur(12px);
+  pointer-events: none;
+  animation: distant-drift-slow 40s linear infinite;
+  z-index: 0;
+}
+
+@keyframes distant-drift-slow {
+  0% { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(20px) translateY(15px); }
+}
+
+/* Aurora Effect - Rare, ethereal light */
+@keyframes aurora {
+  0% { opacity: 0; transform: translateX(-100%) skewX(-20deg); }
+  10% { opacity: 0.3; }
+  20% { opacity: 0.5; }
+  30% { opacity: 0.3; }
+  40% { opacity: 0; transform: translateX(100%) skewX(-20deg); }
+  100% { opacity: 0; transform: translateX(100%) skewX(-20deg); }
+}
+
+.aurora {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, 
+    rgba(0, 255, 100, 0.1), 
+    rgba(0, 100, 255, 0.1), 
+    rgba(255, 0, 100, 0.1));
+  pointer-events: none;
+  animation: aurora 45s ease-in-out infinite;
+  z-index: 0;
+  mix-blend-mode: screen;
+}
+
+/* Particle System - Floating particles */
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(100, 200, 255, 0.4);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: float-particle 20s linear infinite;
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(50px);
+    opacity: 0;
+  }
+}
+
+/* Scanning Line - Subtle terminal scan effect */
+@keyframes scan {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+.scan-line {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.3), transparent);
+  pointer-events: none;
+  animation: scan 8s linear infinite;
+  z-index: 1;
+}
+
+/* Ambient Light Pulses - Subtle screen glow */
+@keyframes ambient-pulse {
+  0% { box-shadow: inset 0 0 20px rgba(0, 255, 0, 0); }
+  50% { box-shadow: inset 0 0 30px rgba(0, 255, 0, 0.05); }
+  100% { box-shadow: inset 0 0 20px rgba(0, 255, 0, 0); }
+}
+
+#game {
+  animation: ambient-pulse 8s ease-in-out infinite;
+}
+
+/* Deep Space Hum - Visual representation of background radiation */
+.deep-space-hum {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 50px;
+  height: 2px;
+  background: rgba(0, 255, 0, 0.2);
+  animation: hum-wave 3s ease-in-out infinite;
+  transform-origin: left;
+  z-index: 0;
+}
+
+@keyframes hum-wave {
+  0%, 100% { transform: scaleX(0.8); opacity: 0.2; }
+  50% { transform: scaleX(1.2); opacity: 0.5; }
+}
+/* ==================== ATMOSPHERIC EFFECTS ==================== */
+/* ==================== ATMOSPHERIC EFFECTS ==================== */
+
+/* Distant Nebula Glow - Continuous smooth pulse */
+@keyframes nebula-pulse {
+  0% { background-color: rgba(10, 5, 20, 0); }
+  50% { background-color: rgba(30, 10, 40, 0.08); }
+  100% { background-color: rgba(10, 5, 20, 0); }
+}
+
+#game::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  animation: nebula-pulse 40s ease-in-out infinite;
+}
+
+/* Drifting Fog - Seamless infinite drift */
+.drifting-fog {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, rgba(0, 20, 40, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+  animation: fog-drift 180s linear infinite;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+@keyframes fog-drift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Particle System - Floating particles */
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(100, 200, 255, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: float-particle 30s linear infinite;
+  will-change: transform;
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.4;
+  }
+  95% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(30px);
+    opacity: 0;
+  }
+}
+
+/* Distant Planets - Smooth drift */
+.distant-world {
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(100, 80, 60, 0.25), rgba(30, 20, 10, 0.08));
+  filter: blur(10px);
+  pointer-events: none;
+  animation: distant-haze 30s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes distant-haze {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(1.03); }
+}
+
+.distant-world-2 {
+  position: absolute;
+  top: 15%;
+  left: 8%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, rgba(80, 100, 120, 0.2), rgba(20, 30, 40, 0.05));
+  filter: blur(15px);
+  pointer-events: none;
+  animation: distant-drift-slow 60s linear infinite;
+  z-index: 0;
+}
+
+@keyframes distant-drift-slow {
+  0% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(15px) translateY(10px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+/* Aurora Effect - Rare, ethereal light */
+@keyframes aurora {
+  0% { opacity: 0; transform: translateX(-100%) skewX(-20deg); }
+  15% { opacity: 0.2; }
+  30% { opacity: 0.35; }
+  45% { opacity: 0.2; }
+  60% { opacity: 0; transform: translateX(100%) skewX(-20deg); }
+  100% { opacity: 0; transform: translateX(100%) skewX(-20deg); }
+}
+
+.aurora {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, 
+    rgba(0, 255, 100, 0.08), 
+    rgba(0, 100, 255, 0.08), 
+    rgba(255, 0, 100, 0.08));
+  pointer-events: none;
+  animation: aurora 90s ease-in-out infinite;
+  z-index: 0;
+  mix-blend-mode: screen;
+}
+
+/* Deep Space Hum - Subtle, continuous wave */
+.deep-space-hum {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+  width: 60px;
+  height: 2px;
+  background: rgba(0, 255, 0, 0.15);
+  animation: hum-wave 4s ease-in-out infinite;
+  transform-origin: left;
+  z-index: 0;
+  border-radius: 2px;
+}
+
+@keyframes hum-wave {
+  0%, 100% { transform: scaleX(0.7); opacity: 0.2; }
+  50% { transform: scaleX(1.3); opacity: 0.4; }
+}
+
+/* Faint star twinkling - Subtle and continuous */
+#game::before {
+  animation: starfield-twinkle 8s ease-in-out infinite alternate;
+}
+
+@keyframes starfield-twinkle {
+  0% { opacity: 0.75; }
+  100% { opacity: 0.95; }
+}
+
+/* Ambient Light Pulses - Subtle screen glow */
+@keyframes ambient-pulse {
+  0% { box-shadow: inset 0 0 20px rgba(0, 255, 0, 0); }
+  50% { box-shadow: inset 0 0 30px rgba(0, 255, 0, 0.05); }
+  100% { box-shadow: inset 0 0 20px rgba(0, 255, 0, 0); }
+}
+
+#game {
+  animation: ambient-pulse 8s ease-in-out infinite;
+}
+/* ==================== CHAOS OVERRIDES - KEEP INPUT TEXT READABLE ==================== */
+
+/* Only override the input text field - keep everything else wacky */
+#game.reality-chaos-severe #terminal input,
+#game.reality-chaos-extreme #terminal input {
+  filter: none !important;
+  animation: none !important;
+  transform: none !important;
+  text-shadow: none !important;
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+  color: #00ff00 !important;
+  font-family: monospace !important;
+}
+
+/* Keep the terminal container and button wacky - no overrides */
+/* Don't override #terminal or #terminal button - let them be chaotic *//* ==================== CHAOS OVERRIDES - KEEP INPUT TEXT READABLE ==================== */
+
+/* Only the text inside the input field needs to be readable - the box can still warp */
+#game.reality-chaos-severe #terminal input,
+#game.reality-chaos-extreme #terminal input {
+  /* Override the SVG filter only for the text */
+  filter: none !important;
+  -webkit-filter: none !important;
+  /* Keep the text readable */
+  color: #00ff00 !important;
+  text-shadow: none !important;
+  letter-spacing: normal !important;
+  word-spacing: normal !important;
+  font-family: monospace !important;
+  /* Keep the box style so it looks like it's part of the chaos */
+  background: rgba(0, 0, 0, 0.8) !important;
+  border: 1px solid #00ff00 !important;
+}
+
+/* The input box itself can still wobble/shake - don't override transform/position */
+#game.reality-chaos-severe #terminal input,
+#game.reality-chaos-extreme #terminal input {
+  /* Let transform/position from chaos apply to the box */
+  transform: inherit;
+  animation: inherit;
+}
+
+/* The text inside the input is what we care about - it stays clear */
+#game.reality-chaos-severe #terminal input::placeholder,
+#game.reality-chaos-extreme #terminal input::placeholder {
+  color: #00aa00 !important;
+  filter: none !important;
+  opacity: 0.7 !important;
+}
+

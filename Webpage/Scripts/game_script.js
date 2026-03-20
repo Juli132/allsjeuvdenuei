@@ -2044,6 +2044,18 @@ function handleKeyPress(e) {
     togglePause();
   }
 }
+function createParticles() {
+  const particleCount = 30;
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.top = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 20 + 's';
+    particle.style.animationDuration = 15 + Math.random() * 15 + 's';
+    document.getElementById('game').appendChild(particle);
+  }
+}
 
 // --- INIT ---
 function initGame() {
@@ -2053,6 +2065,9 @@ function initGame() {
     document.getElementById('game')?.style.setProperty('--mouse-x', x + '%');
     document.getElementById('game')?.style.setProperty('--mouse-y', y + '%');
   });
+
+
+
 
   document.addEventListener('keydown', handleKeyPress);
 
@@ -2135,6 +2150,7 @@ function initGame() {
 
   updateStatsPanel();
   startTimers();
+  createParticles();
   startAmbientTimer();
 
   const panel = document.getElementById("dictionary-panel");
