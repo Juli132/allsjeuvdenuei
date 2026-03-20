@@ -221,7 +221,7 @@ function updateStatsPanel() {
   const previousPhase = gameState.currentPhase;
   const currentPhase = getCyclePhase();
   
-  if (statKnowledge) statKnowledge.textContent = gameState.knowledge;
+  if (statKnowledge) statKnowledge.textContent = gameState.knowledge.toFixed(1);
   if (statPlanet) statPlanet.textContent = `${Math.floor(gameState.planetHealth)}%`;
   if (statUniverse) statUniverse.textContent = `${Math.floor(gameState.universeHealth)}%`;
   if (statStrain) statStrain.textContent = `${Math.floor(gameState.strain)}%`;
@@ -1442,7 +1442,7 @@ function handleCommand(input) {
     return;
   }
   if (cmd === "/stats") {
-    addMessage(`Knowledge: ${gameState.knowledge}`, "machine");
+    addMessage(`Knowledge: ${gameState.knowledge.toFixed(1)}`, "machine");
     addMessage(`Planet: ${Math.floor(gameState.planetHealth)}%`, "machine");
     addMessage(`Universe: ${Math.floor(gameState.universeHealth)}%`, "machine");
     addMessage(`Strain: ${Math.floor(gameState.strain)}%`, "machine");
