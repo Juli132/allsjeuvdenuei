@@ -20,6 +20,7 @@ Words have 10 uses. After that, they die.
 /clear    - Clear terminal.
 /sound    - enable/ disable sound
 press ESC to pause and ESC again to resume. 
+F11 to go to full screen 
 
 > COSMIC CYCLE
 Watch the PHASE indicator:
