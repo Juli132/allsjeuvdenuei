@@ -2031,7 +2031,7 @@ body {
     mix-blend-mode: overlay;
 }
 
-/* Monitor stand - heavy base */
+/* Monitor stand -
 #monitor-stand {
     width: 200px;
     height: 28px;
@@ -2042,10 +2042,10 @@ body {
     box-shadow: 
         0 8px 15px rgba(0,0,0,0.5),
         inset 0 1px 0 rgba(255,255,255,0.08);
-}
+} heavy base */
 
-/* Stand base (foot) */
-#monitor-stand::before {
+
+/* Stand base#monitor-stand::before {
     content: '';
     position: absolute;
     bottom: -12px;
@@ -2058,7 +2058,7 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.4);
 }
 
-/* Stand shadow on desk */
+/* Stand shadow on desk
 #monitor-stand::after {
     content: '';
     position: absolute;
@@ -2072,6 +2072,7 @@ body {
     border-radius: 50%;
     pointer-events: none;
 }
+ (foot) */
 
 /* Optional: Speaker grilles on sides */
 .monitor-speaker-left,
@@ -2164,3 +2165,4 @@ body {
     pointer-events: none;
     z-index: -1;
 }
+

@@ -305,8 +305,9 @@ function quitToMenu() {
     if (pauseTimers.cycleTimer) clearInterval(pauseTimers.cycleTimer);
     if (pauseTimers.ambientTimer) clearInterval(pauseTimers.ambientTimer);
     
-    const game = document.getElementById("game");
-    if (game) game.style.display = "none";
+    // Hide the game environment, not the old #game
+    const gameEnv = document.getElementById("game-environment");
+    if (gameEnv) gameEnv.style.display = "none";
     
     const menu = document.getElementById("menu");
     if (menu) menu.style.display = "flex";
@@ -314,7 +315,6 @@ function quitToMenu() {
     gamePaused = false;
   }, 1000);
 }
-
 // --- FLOW ---
 let inputLocked = false;
 let voidTimer = null;
@@ -1733,8 +1733,13 @@ function checkHealth() {
 }
 
 // --- RESET ---
-// --- RESET ---
 function resetGame() {
+  // Clear any pending timeouts that might be causing issues
+  if (voidTimerCountdown) {
+    clearTimeout(voidTimerCountdown);
+    voidTimerCountdown = null;
+  }
+  
   // Reset faint overlay if active
   if (faintActive) {
     const faintOverlay = document.getElementById("faint-overlay");
@@ -1746,11 +1751,7 @@ function resetGame() {
     faintActive = false;
   }
   
-  if (voidTimerCountdown) {
-    clearTimeout(voidTimerCountdown);
-    voidTimerCountdown = null;
-  }
-  
+  // Reset game state
   gameState = {
     knowledge: 0,
     dictionary: {},
@@ -1774,29 +1775,35 @@ function resetGame() {
     deepMeditationEndTime: 0
   };
   
+  // Clear the output
   const output = document.getElementById("output");
   if (output) output.innerHTML = "";
+  
+  // Add starting messages
   addMessage("A new universe begins.", "machine");
   addMessage("I'll do better this time.", "player");
   updateStatsPanel();
   
+  // Reset passive systems
   if (window.passiveCleanup) {
     window.passiveCleanup(false);
   }
+  
+  // Clear existing timers
   if (ambientTimer) clearInterval(ambientTimer);
-  
-  const panel = document.getElementById("dictionary-panel");
-  if (panel) panel.style.display = "none";
-  
-  // IMPORTANT: Clear existing timers before restarting
   if (voidTimer) clearInterval(voidTimer);
   if (transmissionTimer) clearInterval(transmissionTimer);
   if (cycleTimer) clearInterval(cycleTimer);
   
+  // Hide dictionary panel if open
+  const panel = document.getElementById("dictionary-panel");
+  if (panel) panel.style.display = "none";
+  
+  // Restart timers
   startTimers();
   startAmbientTimer();
   
-  // Re-enable input
+  // Re-enable all input elements
   const input = document.getElementById("player-input");
   const submitBtn = document.getElementById("submit-btn");
   const actionButtons = ["learn-btn", "pray-btn", "sleep-btn", "meditate-btn", "deep-meditate-btn", "dict-btn"];
@@ -1816,9 +1823,14 @@ function resetGame() {
   const gameEnv = document.getElementById("game-environment");
   if (gameEnv) gameEnv.style.display = "flex";
   
-  // Clear any locked input state
+  // Reset all flags
   inputLocked = false;
   gamePaused = false;
+  
+  // Force a stats panel update
+  updateStatsPanel();
+  
+  console.log("Game reset complete");
 }
 
 // --- COMMAND ---
@@ -2127,14 +2139,6 @@ function initGame() {
     document.getElementById('game')?.style.setProperty('--mouse-y', y + '%');
   });
 
-
-// Make sure input is enabled and focused
-const input = document.getElementById("player-input");
-if (input) {
-  input.disabled = false;
-  input.focus();
-}
-
   document.addEventListener('keydown', handleKeyPress);
 
   const cleanupPassive = initPassiveSystems(
@@ -2149,8 +2153,17 @@ if (input) {
   
   console.log("Initializing game...");
   
-  const game = document.getElementById("game-environment");
-  if (game) game.style.display = "flex";
+  // Hide intro if visible
+  const intro = document.getElementById("intro");
+  if (intro) intro.style.display = "none";
+  
+  // Show game environment
+  const gameEnv = document.getElementById("game-environment");
+  if (gameEnv) gameEnv.style.display = "flex";
+  
+  // Make sure the inner game element is visible
+  const game = document.getElementById("game");
+  if (game) game.style.display = "block";
 
   createStatsPanel();
 
@@ -2184,6 +2197,9 @@ if (input) {
     playerInput.onkeypress = e => { 
       if (e.key === "Enter" && submitBtn) submitBtn.click(); 
     };
+    // Make sure input is enabled and focused
+    playerInput.disabled = false;
+    playerInput.focus();
   }
 
   if (learnBtn) learnBtn.onclick = read;
@@ -2253,7 +2269,6 @@ if (input) {
     }
   };
 }
-
 // --- AUTO START ---
 let gameInitialized = false;
 
