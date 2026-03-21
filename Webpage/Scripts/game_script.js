@@ -927,6 +927,20 @@ function advanceTime() {
     gameState.voidAttention = Math.min(100, Math.max(0, gameState.voidAttention - cycleEffect));
   }
   
+  // ============ NEW: KARMA DECAY SYSTEM ============
+  // Every 15 cycles, karma drifts toward 0 by 1
+  if (gameState.cycles % 15 === 0 && netKarma !== 0 && !gameState.hasEnding) {
+    if (gameState.blessings > gameState.curses) {
+      gameState.blessings = Math.max(0, gameState.blessings - 1);
+      addMessage("Some blessings fade with time...", "machine");
+    } else if (gameState.curses > gameState.blessings) {
+      gameState.curses = Math.max(0, gameState.curses - 1);
+      addMessage("A curse loses its grip...", "machine");
+    }
+    updateStatsPanel();
+  }
+  //  END KARMA DECAY 
+  
   if (Math.abs(oldVoid - gameState.voidAttention) > 0.5) {
     showStatChange("Void", oldVoid, gameState.voidAttention);
   }
