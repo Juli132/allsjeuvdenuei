@@ -1708,9 +1708,17 @@ function triggerEnding(type) {
     setTimeout(() => addMessage(line, i % 2 === 0 ? "machine" : "player"), i * 2000);
   });
   
-  setTimeout(() => {
-    if (confirm("Play again?")) resetGame();
-  }, endings[type].length * 2000 + 2000);
+setTimeout(() => {
+  if (confirm("Play again?")) {
+    resetGame();
+  } else {
+    // If they don't want to play again, return to menu
+    const gameEnv = document.getElementById("game-environment");
+    if (gameEnv) gameEnv.style.display = "none";
+    const menu = document.getElementById("menu");
+    if (menu) menu.style.display = "flex";
+  }
+}, endings[type].length * 2000 + 2000);
 }
 
 // --- HEALTH ---
@@ -1725,7 +1733,9 @@ function checkHealth() {
 }
 
 // --- RESET ---
+// --- RESET ---
 function resetGame() {
+  // Reset faint overlay if active
   if (faintActive) {
     const faintOverlay = document.getElementById("faint-overlay");
     if (faintOverlay) {
@@ -1778,8 +1788,37 @@ function resetGame() {
   const panel = document.getElementById("dictionary-panel");
   if (panel) panel.style.display = "none";
   
+  // IMPORTANT: Clear existing timers before restarting
+  if (voidTimer) clearInterval(voidTimer);
+  if (transmissionTimer) clearInterval(transmissionTimer);
+  if (cycleTimer) clearInterval(cycleTimer);
+  
   startTimers();
   startAmbientTimer();
+  
+  // Re-enable input
+  const input = document.getElementById("player-input");
+  const submitBtn = document.getElementById("submit-btn");
+  const actionButtons = ["learn-btn", "pray-btn", "sleep-btn", "meditate-btn", "deep-meditate-btn", "dict-btn"];
+  
+  if (input) {
+    input.disabled = false;
+    input.value = "";
+    input.focus();
+  }
+  if (submitBtn) submitBtn.disabled = false;
+  actionButtons.forEach(btnId => {
+    const btn = document.getElementById(btnId);
+    if (btn) btn.disabled = false;
+  });
+  
+  // Make sure the game environment is visible
+  const gameEnv = document.getElementById("game-environment");
+  if (gameEnv) gameEnv.style.display = "flex";
+  
+  // Clear any locked input state
+  inputLocked = false;
+  gamePaused = false;
 }
 
 // --- COMMAND ---
@@ -2089,7 +2128,12 @@ function initGame() {
   });
 
 
-
+// Make sure input is enabled and focused
+const input = document.getElementById("player-input");
+if (input) {
+  input.disabled = false;
+  input.focus();
+}
 
   document.addEventListener('keydown', handleKeyPress);
 
