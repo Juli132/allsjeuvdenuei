@@ -711,9 +711,6 @@ body {
 ::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.3);
 }
-::-webkit-scrollbar-thumb {
-  background: green;
-}
 
 
 /* ==================== AMBIENT EFFECTS - MINIMAL ==================== */
@@ -1803,3 +1800,367 @@ body {
   100% { top: 110%; opacity: 0; }
 }
 
+/* ==================== THE ENVIRONMENT ==================== */
+#game-environment {
+    width: 100vw;
+    height: 100vh;
+    background: #050505;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* ==================== THE MONITOR CASE ==================== */
+#monitor-shell {
+    background: #1a1a1a;
+    padding: 35px 45px;  /* More horizontal padding */
+    border-radius: 50px 50px 45px 45px;
+    border: 4px solid #222;
+    box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05);
+    position: relative;
+    margin-bottom: 40px;
+}
+
+/* THE ACTUAL SCREEN - WIDE MONITOR */
+#game {
+    display: block !important;
+    width: 1500px;  /* Much wider */
+    height: 800px;  /* Moderate height - widescreen ratio */
+    background: black;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    border: 12px solid #000;  /* Thicker bezel */
+    box-shadow: inset 0 0 50px rgba(0,255,0,0.05);
+}
+
+/* Fix the top border being cut off - add margin to #game */
+#game {
+    margin-top: 5px;  /* Ensures top border is visible */
+}
+
+/* OUTPUT TEXT - Expand horizontally */
+#output {
+    left: 35px;
+    top: 35px;
+    width: 600px;  /* Wider text area */
+    max-width: 45%;
+    max-height: 70vh;
+    font-size: 1.2em;
+}
+
+/* SIDEBAR - Reposition to use extra width */
+#sidebar {
+    top: 35px;
+    right: 35px;
+    transform: scale(1);
+    min-width: 180px;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 18px;
+}
+
+/* STATS PANEL - Move further right to use widescreen space */
+#stats-panel {
+    top: 35px;
+    right: 280px;  /* Further right since screen is wider */
+    width: 180px;
+    transform: scale(1);
+    font-size: 1em;
+    padding: 15px;
+}
+
+/* DICTIONARY PANEL - Adjust for widescreen */
+#dictionary-panel {
+    right: 280px;
+    top: 240px;
+    width: 320px;
+    max-height: 480px;
+}
+
+/* PLANET - Keep proportional */
+#planet {
+    width: 140px;
+    height: 140px;
+}
+
+#planet::after {
+    width: 220px;
+    height: 45px;
+}
+
+/* MOON orbit */
+@keyframes moon-orbit {
+    0% { transform: rotate(0deg) translateX(110px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(110px) rotate(-360deg); }
+}
+
+/* Ensure monitor shell doesn't cut off top */
+#monitor-shell {
+    margin-top: 10px;
+}
+
+/* Add a subtle highlight to the top of monitor */
+#monitor-shell::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 10%;
+    width: 80%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Make terminal platform match widescreen aesthetic */
+#terminal-platform {
+    width: 750px;
+    padding: 22px 30px;
+}
+
+#terminal input {
+    font-size: 1.2em;
+    padding: 14px 20px;
+}
+
+#terminal button {
+    font-size: 1.2em;
+    padding: 14px 32px;
+}
+
+/* MONITOR CABINET*/
+
+/* Main monitor shell - heavy, textured plastic */
+#monitor-shell {
+    background: linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 40%, #0f0f0f 100%);
+    padding: 35px 45px;
+    border-radius: 55px 55px 48px 48px;
+    position: relative;
+    margin-bottom: 45px;
+    /* Complex shadow for depth */
+    box-shadow: 
+        0 40px 60px rgba(0,0,0,0.8),           /* Deep drop shadow */
+        0 0 0 1px rgba(255,255,255,0.08),       /* Subtle edge highlight */
+        inset 0 2px 3px rgba(255,255,255,0.1),  /* Inner top glow */
+        inset 0 -3px 5px rgba(0,0,0,0.4);       /* Inner bottom shadow */
+    transition: box-shadow 0.3s ease;
+}
+
+/* Top edge highlight - makes plastic look rounded */
+#monitor-shell::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 8%;
+    width: 84%;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255,255,255,0.25), 
+        rgba(255,255,255,0.4), 
+        rgba(255,255,255,0.25), 
+        transparent);
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(0.5px);
+}
+
+/* Side shadows - creates the illusion of a beveled edge */
+#monitor-shell::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 0;
+    right: 0;
+    bottom: 5px;
+    background: radial-gradient(ellipse at 50% 0%, 
+        rgba(0,0,0,0.2) 0%,
+        transparent 70%);
+    pointer-events: none;
+    border-radius: 55px 55px 48px 48px;
+}
+
+/* The bezel - raised frame around screen */
+#monitor-bezel {
+    position: relative;
+    background: linear-gradient(135deg, #1e1e1e 0%, #121212 100%);
+    border-radius: 28px;
+    padding: 18px;
+    box-shadow: 
+        inset 0 0 15px 3px rgba(0,0,0,0.8),    /* Deep inner shadow - recessed screen */
+        inset 0 2px 2px rgba(255,255,255,0.08), /* Top inner highlight */
+        0 5px 12px rgba(0,0,0,0.5),             /* Outer shadow lifts bezel */
+        0 0 0 1px rgba(255,255,255,0.05);       /* Thin edge highlight */
+}
+
+/* Beveled corner effect */
+#monitor-bezel::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    border-radius: 22px;
+    background: radial-gradient(ellipse at 30% 30%, 
+        rgba(255,255,255,0.03) 0%,
+        transparent 70%);
+    pointer-events: none;
+}
+
+/* Screen glass - thick, slightly curved */
+.screen-glass {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    background: linear-gradient(135deg, 
+        rgba(255,255,255,0.12) 0%,
+        rgba(255,255,255,0.03) 20%,
+        transparent 50%,
+        rgba(0,0,0,0.1) 100%);
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+    pointer-events: none;
+    z-index: 60;
+    mix-blend-mode: overlay;
+}
+
+/* Monitor stand - heavy base */
+#monitor-stand {
+    width: 200px;
+    height: 28px;
+    background: linear-gradient(135deg, #2a2a2a, #1a1a1a, #0f0f0f);
+    margin: -12px auto 0;
+    border-radius: 0 0 16px 16px;
+    position: relative;
+    box-shadow: 
+        0 8px 15px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Stand base (foot) */
+#monitor-stand::before {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 12px;
+    background: linear-gradient(135deg, #1f1f1f, #0a0a0a);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+/* Stand shadow on desk */
+#monitor-stand::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 8px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.3) 0%, transparent 70%);
+    filter: blur(4px);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Optional: Speaker grilles on sides */
+.monitor-speaker-left,
+.monitor-speaker-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 60px;
+    background: repeating-linear-gradient(
+        0deg,
+        #0a0a0a 0px,
+        #0a0a0a 4px,
+        #1a1a1a 4px,
+        #1a1a1a 8px
+    );
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.monitor-speaker-left {
+    left: -8px;
+}
+
+.monitor-speaker-right {
+    right: -8px;
+}
+
+/* Subtle wear and tear on plastic corners */
+#monitor-shell .wear-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(ellipse, rgba(255,255,255,0.03) 0%, transparent 70%);
+    pointer-events: none;
+    border-radius: 50%;
+}
+
+.wear-corner.tl { top: 10px; left: 10px; }
+.wear-corner.tr { top: 10px; right: 10px; }
+.wear-corner.bl { bottom: 10px; left: 10px; }
+.wear-corner.br { bottom: 10px; right: 10px; }
+
+
+.power-led {
+    position: absolute;
+    bottom: 15px;
+    left: 25px;
+    width: 8px;
+    height: 8px;
+    background: #2a6f2a;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #2a6f2a;
+    animation: led-pulse 2s infinite;
+    z-index: 15;
+    pointer-events: none;
+}
+
+@keyframes led-pulse {
+    0% { opacity: 0.4; box-shadow: 0 0 2px #2a6f2a; background: #1a4f1a; }
+    50% { opacity: 1; box-shadow: 0 0 8px #4faf4f; background: #3f8f3f; }
+    100% { opacity: 0.4; box-shadow: 0 0 2px #2a6f2a; background: #1a4f1a; }
+}
+
+/* Subtle dust effect on plastic */
+.dust-texture {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 8px 8px;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 5;
+}
+/* Shadow behind monitor on desk */
+#game-environment::before {
+    content: '';
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 30px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, transparent 70%);
+    filter: blur(15px);
+    pointer-events: none;
+    z-index: -1;
+}

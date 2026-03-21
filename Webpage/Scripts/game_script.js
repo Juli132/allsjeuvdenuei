@@ -2105,8 +2105,8 @@ function initGame() {
   
   console.log("Initializing game...");
   
-  const game = document.getElementById("game");
-  if (game) game.style.display = "block";
+  const game = document.getElementById("game-environment");
+  if (game) game.style.display = "flex";
 
   createStatsPanel();
 
