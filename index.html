@@ -1,104 +1,141 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Universe Terminal</title>
-  <link rel="stylesheet" href="Webpage/Styles/index.css">
-</head>
-<body>
-  <!-- SVG filters for reality chaos effects -->
-<svg style="position: absolute; width: 0; height: 0; pointer-events: none;">
-  <defs>
-    <!-- Liquid distortion filter -->
-    <filter id="liquid-filter">
-      <feTurbulence baseFrequency="0.02" numOctaves="3" result="turbulence"/>
-      <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="8" xChannelSelector="R" yChannelSelector="G"/>
-      <feGaussianBlur stdDeviation="0.5"/>
-      <feColorMatrix type="saturate" values="1.5"/>
-    </filter>
-    
-    <!-- Warp filter for extreme chaos -->
-    <filter id="warp-filter">
-      <feTurbulence baseFrequency="0.05 0.03" numOctaves="2" result="turbulence"/>
-      <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="15" xChannelSelector="R" yChannelSelector="B"/>
-      <feColorMatrix type="hueRotate" values="180"/>
-      <feComposite operator="over"/>
-    </filter>
-    
-    <!-- Pixelate filter for reality breakdown -->
-    <filter id="pixelate-filter">
-      <feFlood flood-color="black" result="bg"/>
-      <feImage result="img"/>
-      <feTile result="tiled"/>
-      <feComposite operator="in" in2="img"/>
-      <feColorMatrix type="saturate" values="0.3"/>
-    </filter>
-    
-    <!-- Chromatic aberration -->
-    <filter id="chromatic-filter">
-      <feOffset dx="2" dy="0" in="SourceGraphic" result="red" />
-      <feOffset dx="-2" dy="0" in="SourceGraphic" result="blue" />
-      <feMerge>
-        <feMergeNode in="red" />
-        <feMergeNode in="SourceGraphic" />
-        <feMergeNode in="blue" />
-      </feMerge>
-    </filter>
-  </defs>
-</svg>
-  <!-- Intro overlay -->
-  <div id="intro">
-    <div id="intro-text"></div>
-  </div>
-<!-- Tutorial overlay -->
-<div id="tutorial" style="display:none;">
-  <div id="tutorial-output"></div>
-  <div id="tutorial-choices" style="display:none;">
-    <button class="choice-btn">I got this</button>
-    <button class="choice-btn">Sure, tell me</button>
-  </div>
-</div>
-  <!-- Main game screen -->
-  <div id="game" style="display:none;">
-    <div id="background">
-      <div id="planet"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Universe Terminal</title>
+    <link rel="stylesheet" href="Webpage/Styles/index.css" />
+  </head>
+  <body>
+    <!-- SVG filters for reality chaos effects -->
+    <svg style="position: absolute; width: 0; height: 0; pointer-events: none">
+      <defs>
+        <!-- Liquid distortion filter -->
+        <filter id="liquid-filter">
+          <feTurbulence
+            baseFrequency="0.02"
+            numOctaves="3"
+            result="turbulence"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="turbulence"
+            scale="8"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+          <feGaussianBlur stdDeviation="0.5" />
+          <feColorMatrix type="saturate" values="1.5" />
+        </filter>
+
+        <!-- Warp filter for extreme chaos -->
+        <filter id="warp-filter">
+          <feTurbulence
+            baseFrequency="0.05 0.03"
+            numOctaves="2"
+            result="turbulence"
+          />
+          <feDisplacementMap
+            in="SourceGraphic"
+            in2="turbulence"
+            scale="15"
+            xChannelSelector="R"
+            yChannelSelector="B"
+          />
+          <feColorMatrix type="hueRotate" values="180" />
+          <feComposite operator="over" />
+        </filter>
+
+        <!-- Pixelate filter for reality breakdown -->
+        <filter id="pixelate-filter">
+          <feFlood flood-color="black" result="bg" />
+          <feImage result="img" />
+          <feTile result="tiled" />
+          <feComposite operator="in" in2="img" />
+          <feColorMatrix type="saturate" values="0.3" />
+        </filter>
+
+        <!-- Chromatic aberration -->
+        <filter id="chromatic-filter">
+          <feOffset dx="2" dy="0" in="SourceGraphic" result="red" />
+          <feOffset dx="-2" dy="0" in="SourceGraphic" result="blue" />
+          <feMerge>
+            <feMergeNode in="red" />
+            <feMergeNode in="SourceGraphic" />
+            <feMergeNode in="blue" />
+          </feMerge>
+        </filter>
+      </defs>
+    </svg>
+    <!-- Intro overlay -->
+    <div id="intro">
+      <div id="intro-text"></div>
+    </div>
+    <!-- Tutorial overlay -->
+    <div id="tutorial" style="display: none">
+      <div id="tutorial-output"></div>
+      <div id="tutorial-choices" style="display: none">
+        <button class="choice-btn">I got this</button>
+        <button class="choice-btn">Sure, tell me</button>
+      </div>
+    </div>
+    <!-- Main game screen -->
+    <div id="game" style="display: none">
+      <!-- Screen Overlay Effects - Add right after <div id="game"> -->
+
+      <div class="screen-overlay"></div>
+      <div class="screen-curve"></div>
+      <div class="screen-frost"></div>
+      <div class="screen-reflection"></div>
+      <div class="screen-flicker"></div>
+      <div class="screen-vignette"></div>
+
+      <div id="background">
+        <div id="planet"></div>
+      </div>
+
+      <div id="output"></div>
+
+      <!-- Faint overlay -->
+      <div id="faint-overlay">
+        <div id="faint-text">...</div>
+      </div>
+
+      <div class="universe-overlay"></div>
+      <!-- Atmospheric Elements -->
+      <div class="drifting-fog"></div>
+      <div class="distant-world"></div>
+      <div class="distant-world-2"></div>
+      <div class="aurora"></div>
+      <div class="deep-space-hum"></div>
+
+      <div id="sidebar">
+        <button id="learn-btn">Learn</button>
+        <button id="pray-btn">Pray</button>
+        <button id="sleep-btn">Sleep</button>
+        <button id="meditate-btn">Meditate</button>
+        <button id="deep-meditate-btn">Deep Meditate (50)</button>
+        <button id="dict-btn">Dictionary</button>
+      </div>
+
+      <div id="dictionary-panel" style="display: none">
+        <div id="dictionary-content"></div>
+      </div>
+
+      <div id="terminal">
+        <input
+          type="text"
+          id="player-input"
+          placeholder="Type your command here..."
+          autocomplete="off"
+        />
+        <button id="submit-btn">Execute</button>
+      </div>
+
+      
     </div>
 
-    <div id="output"></div>
-    
-    <!-- Faint overlay -->
-    <div id="faint-overlay">
-      <div id="faint-text">...</div>
-    </div>
-    
-    <!-- Atmospheric Elements -->
-    <div class="drifting-fog"></div>
-    <div class="distant-world"></div>
-    <div class="distant-world-2"></div>
-    <div class="aurora"></div>
-    <div class="deep-space-hum"></div>
-    
-    <div id="sidebar">
-      <button id="learn-btn">Learn</button>
-      <button id="pray-btn">Pray</button>
-      <button id="sleep-btn">Sleep</button>
-      <button id="meditate-btn">Meditate</button>
-      <button id="deep-meditate-btn">Deep Meditate (50)</button>
-      <button id="dict-btn">Dictionary</button>
-    </div>
-    
-    <div id="dictionary-panel" style="display:none;">
-      <div id="dictionary-content"></div>
-    </div>
-    
-    <div id="terminal">
-      <input type="text" id="player-input" placeholder="Type your command here..." autocomplete="off">
-      <button id="submit-btn">Execute</button>
-    </div>
-  </div>
-
-  <script src="Webpage/Scripts/index_script.js"></script>
-  <script src="Webpage/Scripts/tutorial_script.js"></script>
-  <script type="module" src="Webpage/Scripts/game_script.js"></script>
-</body>
+    <script src="Webpage/Scripts/index_script.js"></script>
+    <script src="Webpage/Scripts/tutorial_script.js"></script>
+    <script type="module" src="Webpage/Scripts/game_script.js"></script>
+  </body>
 </html>

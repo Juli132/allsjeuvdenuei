@@ -616,19 +616,22 @@ function updateStatsPanel() {
   if (gameEl) {
     gameEl.classList.remove("universe-healthy", "universe-mild", "universe-warning", "universe-critical", "universe-severe", "universe-dead");
     
-    if (gameState.universeHealth <= 0) {
-      gameEl.classList.add("universe-dead");
-    } else if (gameState.universeHealth < 20) {
-      gameEl.classList.add("universe-severe");
-    } else if (gameState.universeHealth < 40) {
-      gameEl.classList.add("universe-critical");
-    } else if (gameState.universeHealth < 60) {
-      gameEl.classList.add("universe-warning");
-    } else if (gameState.universeHealth < 80) {
-      gameEl.classList.add("universe-mild");
-    } else {
-      gameEl.classList.add("universe-healthy");
-    }
+   if (gameState.universeHealth <= 0) {
+  gameEl.classList.add("universe-dead");
+  // Fade planet more
+  if (planetEl) planetEl.style.opacity = "0.2";
+} else if (gameState.universeHealth < 20) {
+  gameEl.classList.add("universe-severe");
+  if (planetEl) planetEl.style.opacity = "0.5";
+} else if (gameState.universeHealth < 40) {
+  gameEl.classList.add("universe-critical");
+  if (planetEl) planetEl.style.opacity = "0.7";
+} else if (gameState.universeHealth < 60) {
+  gameEl.classList.add("universe-warning");
+  if (planetEl) planetEl.style.opacity = "0.85";
+} else {
+  if (planetEl) planetEl.style.opacity = "1";
+}
     
     gameEl.classList.remove("void-low", "void-medium", "void-high", "void-critical", "void-max", "void-dim");
     
@@ -1167,7 +1170,7 @@ function sleep() {
       const voidReduction = Math.floor(3 * effectiveness);
       gameState.strain = Math.max(0, gameState.strain - strainReduction);
       gameState.voidAttention = Math.max(0, gameState.voidAttention - voidReduction);
-      gameState.blessings = Math.min(20, gameState.blessings + 1);
+    // removed blessing for sleep
       gameState.realityStability = Math.min(100, gameState.realityStability + 2);
       
       showStatChange("Planet", oldPlanet, gameState.planetHealth);
@@ -1228,6 +1231,11 @@ function pray() {
       addMessage("That felt right.", "player");
       gameState.blessings = Math.min(20, gameState.blessings + 1);
       gameState.realityStability = Math.min(100, gameState.realityStability + 1);
+
+
+      gameState.universeHealth = Math.min(100, gameState.universeHealth + 2);
+      addMessage("The universe breathes easier.", "machine");
+
     }
 
     showStatChange("Planet", oldPlanet, gameState.planetHealth);
@@ -1951,7 +1959,7 @@ function startTimers() {
         }
         voidTimerCountdown = null;
       }, 3000);
-      addMessage("The void is at 100%! You have 3 seconds to act...", "machine");
+      addMessage("You have 3 seconds to act...", "machine");
     }
     
     if (gameState.voidAttention < 100 && voidTimerCountdown) {

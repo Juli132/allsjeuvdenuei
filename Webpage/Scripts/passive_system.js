@@ -11,39 +11,39 @@ export function initPassiveSystems(gameState, addMessage, showStatChange, update
     const oldVoid = gameState.voidAttention;
     const oldStrain = gameState.strain;
     
-    // Base decay rates - INCREASED SIGNIFICANTLY
-    let planetDecay = 0.3; // Was 0.1
-    let universeDecay = 0.4; // Was 0.15
-    let voidGrowth = 0.6; // Was 0.2
+    // BALANCE ADJUSTMENT: Reduced decay rates
+    let planetDecay = 0.15; // Was 0.3
+    let universeDecay = 0.2; // Was 0.4
+    let voidGrowth = 0.4; // Was 0.6
     
     // Modify based on game state
     if (gameState.planetHealth < 50) {
-      planetDecay *= 2.0; // Doubles when below 50
+      planetDecay *= 1.5; // Was 2.0
     }
     
     if (gameState.universeHealth < 50) {
-      universeDecay *= 2.0;
+      universeDecay *= 1.5; // Was 2.0
     }
     
-    // Blessings help but not enough
+    // Blessings help more
     if (gameState.blessings > 0) {
-      planetDecay *= Math.max(0.7, 1 - (gameState.blessings * 0.02));
-      universeDecay *= Math.max(0.7, 1 - (gameState.blessings * 0.02));
-      voidGrowth *= Math.max(0.6, 1 - (gameState.blessings * 0.03));
+      planetDecay *= Math.max(0.6, 1 - (gameState.blessings * 0.03)); // Was 0.7
+      universeDecay *= Math.max(0.6, 1 - (gameState.blessings * 0.03));
+      voidGrowth *= Math.max(0.5, 1 - (gameState.blessings * 0.04)); // Was 0.6
     }
     
-    // Curses accelerate decay a lot
+    // Curses accelerate decay (slightly reduced)
     if (gameState.curses > 0) {
-      planetDecay *= (1 + (gameState.curses * 0.1));
-      universeDecay *= (1 + (gameState.curses * 0.1));
-      voidGrowth *= (1 + (gameState.curses * 0.15));
+      planetDecay *= (1 + (gameState.curses * 0.08)); // Was 0.1
+      universeDecay *= (1 + (gameState.curses * 0.08));
+      voidGrowth *= (1 + (gameState.curses * 0.12)); // Was 0.15
     }
     
     // High strain causes faster decay
     if (gameState.strain > 50) {
-      planetDecay *= 1.5;
-      universeDecay *= 1.5;
-      voidGrowth *= 1.8;
+      planetDecay *= 1.3; // Was 1.5
+      universeDecay *= 1.3;
+      voidGrowth *= 1.5; // Was 1.8
     }
     
     // Apply decay
@@ -51,8 +51,18 @@ export function initPassiveSystems(gameState, addMessage, showStatChange, update
     gameState.universeHealth = Math.max(0, gameState.universeHealth - universeDecay);
     gameState.voidAttention = Math.min(100, gameState.voidAttention + voidGrowth);
     
-    // Random idle events happen more often
-    if (Math.random() < 0.3) { // Was 0.1
+    // Karma bonus: positive karma slowly recovers universe health
+    const netKarma = gameState.blessings - gameState.curses;
+    if (netKarma > 0 && gameState.universeHealth < 100 && Math.random() < 0.2) {
+      const universeRecovery = Math.min(2, Math.floor(netKarma / 5) + 1);
+      gameState.universeHealth = Math.min(100, gameState.universeHealth + universeRecovery);
+      if (Math.random() < 0.1) {
+        addMessage("The universe stabilizes slightly.", "machine");
+      }
+    }
+    
+    // Random idle events happen less often
+    if (Math.random() < 0.2) { // Was 0.3
       triggerIdleEvent(gameState, addMessage, showStatChange);
     }
     
@@ -90,50 +100,58 @@ export function initPassiveSystems(gameState, addMessage, showStatChange, update
     updateStatsPanel();
     checkEndings();
     
-  }, 10000); // Faster ticks (was 15000)
+  }, 10000); // Keep at 10 seconds
   
-  // More dangerous idle events
+  // Reduced damage idle events
   function triggerIdleEvent(state, addMsg, showChange) {
     const events = [
       {
-        description: "A star explodes. Nearby systems scorched.",
-        effect: (s) => { s.universeHealth = Math.max(0, s.universeHealth - 5); s.voidAttention = Math.min(100, s.voidAttention + 3); }
+        description: "A distant star explodes. The shockwave ripples through space.",
+        effect: (s) => { s.universeHealth = Math.max(0, s.universeHealth - 3); s.voidAttention = Math.min(100, s.voidAttention + 2); }
       },
       {
-        description: "Massive earthquakes rock the planet.",
-        effect: (s) => { s.planetHealth = Math.max(0, s.planetHealth - 4); s.strain = Math.min(100, s.strain + 3); }
+        description: "Earthquakes shake the planet's crust.",
+        effect: (s) => { s.planetHealth = Math.max(0, s.planetHealth - 2); s.strain = Math.min(100, s.strain + 2); }
       },
       {
-        description: "The void whispers secrets. You shouldn't have listened.",
-        effect: (s) => { s.voidAttention = Math.min(100, s.voidAttention + 8); s.strain = Math.min(100, s.strain + 5); }
+        description: "The void whispers. You try not to listen.",
+        effect: (s) => { s.voidAttention = Math.min(100, s.voidAttention + 5); s.strain = Math.min(100, s.strain + 3); }
       },
       {
-        description: "Transmission: 'It's too late. Run.'",
-        effect: (s) => { s.voidAttention = Math.min(100, s.voidAttention + 6); s.universeHealth = Math.max(0, s.universeHealth - 3); }
+        description: "Transmission: 'They're coming.'",
+        effect: (s) => { s.voidAttention = Math.min(100, s.voidAttention + 4); s.universeHealth = Math.max(0, s.universeHealth - 2); }
       },
       {
-        description: "Something is in the room with you.",
-        effect: (s) => { s.strain = Math.min(100, s.strain + 10); s.voidAttention = Math.min(100, s.voidAttention + 5); }
+        description: "You feel something watching.",
+        effect: (s) => { s.strain = Math.min(100, s.strain + 6); s.voidAttention = Math.min(100, s.voidAttention + 3); }
       },
       {
-        description: "The planet's core destabilizes.",
-        effect: (s) => { s.planetHealth = Math.max(0, s.planetHealth - 6); }
+        description: "Volcanic eruptions darken the sky.",
+        effect: (s) => { s.planetHealth = Math.max(0, s.planetHealth - 3); }
       },
       {
-        description: "Galaxies collide. Chaos spreads.",
-        effect: (s) => { s.universeHealth = Math.max(0, s.universeHealth - 8); s.voidAttention = Math.min(100, s.voidAttention + 4); }
+        description: "Galactic winds sweep through the void.",
+        effect: (s) => { s.universeHealth = Math.max(0, s.universeHealth - 4); s.voidAttention = Math.min(100, s.voidAttention + 2); }
       },
       {
-        description: "Your reflection smiles. You didn't.",
-        effect: (s) => { s.strain = Math.min(100, s.strain + 8); s.voidAttention = Math.min(100, s.voidAttention + 6); }
+        description: "Your reflection flickers. Was it smiling?",
+        effect: (s) => { s.strain = Math.min(100, s.strain + 5); s.voidAttention = Math.min(100, s.voidAttention + 4); }
       },
       {
-        description: "A solar flare fries half the planet.",
-        effect: (s) => { s.planetHealth = Math.max(0, s.planetHealth - 10); }
+        description: "A solar flare scorches the surface.",
+        effect: (s) => { s.planetHealth = Math.max(0, s.planetHealth - 5); }
       },
       {
-        description: "The void takes notice of you.",
-        effect: (s) => { s.voidAttention = Math.min(100, s.voidAttention + 12); s.strain = Math.min(100, s.strain + 5); }
+        description: "The void shifts its attention toward you.",
+        effect: (s) => { s.voidAttention = Math.min(100, s.voidAttention + 8); s.strain = Math.min(100, s.strain + 3); }
+      },
+      {
+        description: "A meteor shower impacts the planet.",
+        effect: (s) => { s.planetHealth = Math.max(0, s.planetHealth - 4); s.strain = Math.min(100, s.strain + 2); }
+      },
+      {
+        description: "A cosmic anomaly distorts local reality.",
+        effect: (s) => { s.universeHealth = Math.max(0, s.universeHealth - 3); s.realityStability = Math.max(0, s.realityStability - 2); }
       }
     ];
     
@@ -143,6 +161,7 @@ export function initPassiveSystems(gameState, addMessage, showStatChange, update
     const oldUniverse = state.universeHealth;
     const oldVoid = state.voidAttention;
     const oldStrain = state.strain;
+    const oldReality = state.realityStability;
     
     event.effect(state);
     
@@ -152,6 +171,7 @@ export function initPassiveSystems(gameState, addMessage, showStatChange, update
     if (oldUniverse !== state.universeHealth) showChange("Universe", oldUniverse, state.universeHealth);
     if (oldVoid !== state.voidAttention) showChange("Void", oldVoid, state.voidAttention);
     if (oldStrain !== state.strain) showChange("Strain", oldStrain, state.strain);
+    if (oldReality !== state.realityStability) showChange("Reality", oldReality, state.realityStability);
   }
   
   return () => {

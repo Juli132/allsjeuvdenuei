@@ -1649,3 +1649,157 @@ body {
   opacity: 0.7 !important;
 }
 
+/* ==================== UNIVERSE HEALTH VISUAL EFFECTS ==================== */
+/* Create a separate overlay for universe dimming */
+.universe-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  background: black;
+  transition: opacity 0.5s ease;
+  opacity: 0;
+}
+
+/* Universe health dimming effect */
+#game.universe-mild .universe-overlay { opacity: 0.05; }
+#game.universe-warning .universe-overlay { opacity: 0.15; }
+#game.universe-critical .universe-overlay { opacity: 0.3; }
+#game.universe-severe .universe-overlay { opacity: 0.5; }
+#game.universe-dead .universe-overlay { opacity: 0.8; }
+
+/* Planet fades with universe */
+#game.universe-severe #planet,
+#game.universe-dead #planet {
+  opacity: 0.5;
+  filter: grayscale(0.5);
+}
+
+#game.universe-dead #planet {
+  opacity: 0.2;
+  filter: grayscale(1);
+}
+
+/* Stars dim progressively */
+#game.universe-mild #game::before { opacity: 0.75; }
+#game.universe-warning #game::before { opacity: 0.6; }
+#game.universe-critical #game::before { opacity: 0.45; }
+#game.universe-severe #game::before { opacity: 0.3; }
+#game.universe-dead #game::before { opacity: 0.1; }
+/* ==================== CRT SCREEN OVERLAY ==================== */
+
+/* Outer screen glow */
+#game::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  border-radius: 0;
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
+}
+
+/* Screen glass texture */
+.screen-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 101;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 255, 0, 0.03) 0px,
+    rgba(0, 255, 0, 0.03) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+}
+
+/* Curved screen effect */
+.screen-curve {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 102;
+  background: radial-gradient(ellipse at center, 
+    transparent 60%,
+    rgba(0, 0, 0, 0.3) 80%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  border-radius: 30px;
+}
+
+/* Frosted glass effect (subtle) */
+.screen-frost {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 103;
+  backdrop-filter: blur(0.3px);
+  background: radial-gradient(circle at 50% 50%, 
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  mix-blend-mode: overlay;
+}
+
+/* Tube light reflection */
+.screen-reflection {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 104;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    transparent 30%,
+    transparent 70%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+}
+
+/* Subtle flicker animation */
+@keyframes screen-flicker {
+  0% { opacity: 0.8; }
+  2% { opacity: 0.7; }
+  4% { opacity: 0.85; }
+  98% { opacity: 0.8; }
+  100% { opacity: 0.75; }
+}
+
+.screen-flicker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 105;
+  background: rgba(0, 0, 0, 0.02);
+  animation: screen-flicker 3s infinite;
+}
+
+
+/* Scan line animation (optional) */
+@keyframes scan-line {
+  0% { top: -10%; opacity: 0.3; }
+  50% { top: 110%; opacity: 0.5; }
+  100% { top: 110%; opacity: 0; }
+}
+
