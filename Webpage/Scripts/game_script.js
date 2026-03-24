@@ -118,16 +118,57 @@ function recoverFromFaint() {
       
       if (input && !gamePaused) input.focus();
       
+     
       addMessage("I wake up. Something changed.", "player");
       addMessage("The void feels much closer.", "machine");
       
-      if (Math.random() < 0.4) {
-        addMessage("I don't feel rested at all.", "player");
-        gameState.strain = Math.min(100, gameState.strain + 15);
-        updateStatsPanel();
+      // SUBSTANTIAL strain recovery (45-70 points)
+      const oldStrain = gameState.strain;
+      const strainRecovery = 45 + Math.floor(Math.random() * 25);
+      gameState.strain = Math.max(20, Math.min(80, gameState.strain - strainRecovery));
+      
+      // Void attention increases (the void noticed your vulnerability)
+      const voidIncrease = 5 + Math.floor(Math.random() * 10);
+      gameState.voidAttention = Math.min(95, gameState.voidAttention + voidIncrease);
+      
+      // Reality stability takes a hit (fainting warps perception)
+      const realityLoss = 2 + Math.floor(Math.random() * 8);
+      gameState.realityStability = Math.max(25, gameState.realityStability - realityLoss);
+      
+      // Show recovery status 
+      if (gameState.strain > 60) {
+        addMessage(`I'm still exhausted (${Math.floor(gameState.strain)}% strain).`, "player");
+      } else if (gameState.strain > 40) {
+        addMessage(`I'm weak, but functional (${Math.floor(gameState.strain)}% strain).`, "player");
+      } else {
+        addMessage(`I feel like I can continue (${Math.floor(gameState.strain)}% strain).`, "player");
       }
       
+      // Visual feedback
+      showStatChange("Strain", oldStrain, gameState.strain);
+      showStatChange("Reality", gameState.realityStability + realityLoss, gameState.realityStability);
+      showStatChange("Void", gameState.voidAttention - voidIncrease, gameState.voidAttention);
+      
+      clampStats();
+      updateStatsPanel();
+      
       faintActive = false;
+      
+      // Add a cooldown to prevent immediate re-fainting
+      gameState.strain = Math.max(20, gameState.strain);
+      
+      // Optional: chance for a vision from the faint
+      if (Math.random() < 0.2) {
+        setTimeout(() => {
+          const visions = [
+            "I had a strange dream... I saw something in the void.",
+            "There was a voice. I couldn't understand it.",
+            "I saw a word, but it slipped away when I woke."
+          ];
+          addMessage(getRandom(visions), "player");
+        }, 2000);
+      }
+      
     }, 1000);
   } else {
     faintActive = false;
