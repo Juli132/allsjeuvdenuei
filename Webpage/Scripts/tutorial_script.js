@@ -32,6 +32,8 @@ NIGHT (60-90) → Best for sleep
 VOID (45-55) → Dangerous. Avoid risky actions.
 NEUTRAL → Normal.
 
+Every 5 cycles, Karma will decrease by 1
+
 > STATS
 Planet health, universe health, reality stability.
 Let any hit zero. The universe ends.

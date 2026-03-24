@@ -931,8 +931,8 @@ function advanceTime() {
   }
   
   // ============ NEW: KARMA DECAY SYSTEM ============
-  // Every 15 cycles, karma drifts toward 0 by 1
-  if (gameState.cycles % 15 === 0 && netKarma !== 0 && !gameState.hasEnding) {
+  // Every 5 cycles, karma drifts toward 0 by 1
+  if (gameState.cycles % 5 === 0 && netKarma !== 0 && !gameState.hasEnding) {
     if (gameState.blessings > gameState.curses) {
       gameState.blessings = Math.max(0, gameState.blessings - 1);
       addMessage("Some blessings fade with time...", "machine");
